@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "committee" "\0"
+            VALUE "FileDescription", "wallet_saving_goals" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "committee" "\0"
+            VALUE "InternalName", "wallet_saving_goals" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2022 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "committee.exe" "\0"
-            VALUE "ProductName", "committee" "\0"
+            VALUE "OriginalFilename", "wallet_saving_goals.exe" "\0"
+            VALUE "ProductName", "wallet_saving_goals" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

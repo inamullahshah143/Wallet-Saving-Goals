@@ -1,6 +1,6 @@
 {
-    "name": "committee",
-    "short_name": "committee",
+    "name": "wallet_saving_goals",
+    "short_name": "wallet_saving_goals",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

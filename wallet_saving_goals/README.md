@@ -1,4 +1,4 @@
-# committee
+# wallet_saving_goals
 
 A new Flutter project.
 

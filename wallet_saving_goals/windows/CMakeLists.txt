@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(committee LANGUAGES CXX)
+project(wallet_saving_goals LANGUAGES CXX)
 
-set(BINARY_NAME "committee")
+set(BINARY_NAME "wallet_saving_goals")
 
 cmake_policy(SET CMP0063 NEW)
 
