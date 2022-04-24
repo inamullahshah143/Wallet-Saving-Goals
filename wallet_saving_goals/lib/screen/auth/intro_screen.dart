@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_onboard/flutter_onboard.dart';
 import 'package:get/get.dart';
-import 'package:committee/constants/color.dart';
-
+import 'package:wallet_saving_goals/constants/color.dart';
 import 'login_screen.dart';
 
 class IntroScreen extends StatelessWidget {

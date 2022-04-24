@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:committee/constants/color.dart';
-import 'package:committee/screen/auth/intro_screen.dart';
+import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/screen/auth/intro_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         );
       },
-      title: 'Committee',
+      title: 'Wallet Saving Goals',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: "Metropolis",
