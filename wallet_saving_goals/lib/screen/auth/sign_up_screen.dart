@@ -1,171 +1,301 @@
 import 'package:flutter/material.dart';
-import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
-import 'package:committee/constants/color.dart';
-import 'package:committee/screen/auth/login_screen.dart';
+import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/screen/auth/login_screen.dart';
 
-class SignupScreen extends StatelessWidget {
-  const SignupScreen({Key key}) : super(key: key);
+class SignupScreen extends StatefulWidget {
+  SignupScreen({Key key}) : super(key: key);
+
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
+  final accountType = ''.obs;
+  final isVisible = true.obs;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: SafeArea(
         child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
+          physics: BouncingScrollPhysics(),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CircleAvatar(
-                radius: 75,
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 50.0,
+                  left: 15.0,
+                  bottom: 15.0,
+                ),
+                child: Text(
+                  'Welcome !',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.primary,
+                  ),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: AppColor.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.secondary,
-                        blurRadius: 5.0,
-                        spreadRadius: 2.0,
-                      ),
-                    ],
+                child: Text(
+                  'Sign up to continue',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: AppColor.fonts.withOpacity(0.75),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          decoration: const InputDecoration(
-                            labelText: 'Username',
-                            hintText: 'Your full name',
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                              labelText: ('Email'),
-                              hintText: 'Your email address'),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                              labelText: ('Password'),
-                              hintText: 'Your secret password'),
-                        ),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        TextFormField(
-                          decoration: const InputDecoration(
-                              labelText: ('Confirm Password'),
-                              hintText: 'Confirm your password'),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: 50,
-                          child: ElevatedButton(
-                            style: ButtonStyle(
-                              foregroundColor: MaterialStateProperty.all<Color>(
-                                  AppColor.white),
-                              overlayColor: MaterialStateProperty.all<Color>(
-                                  AppColor.white.withOpacity(0.1)),
-                            ),
-                            onPressed: () {},
-                            child: const Text('Sign Up'),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Text('OR'),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          height: 50,
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.transparent),
-                              foregroundColor: MaterialStateProperty.all<Color>(
-                                  AppColor.primary),
-                              overlayColor: MaterialStateProperty.all<Color>(
-                                  AppColor.primary.withOpacity(0.1)),
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50.0),
-                                  side: BorderSide(color: AppColor.primary),
-                                ),
-                              ),
-                            ),
-                            child: RichText(
-                              text: const TextSpan(
-                                children: [
-                                  WidgetSpan(
-                                    alignment: PlaceholderAlignment.middle,
-                                    child: Icon(
-                                      FontAwesome.google,
-                                    ),
-                                  ),
-                                  TextSpan(text: '  '),
-                                  WidgetSpan(
-                                    alignment: PlaceholderAlignment.middle,
-                                    child: Text('Sign up with Google'),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Text(
+                  'Credentials',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColor.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    isDense: true,
+                    filled: true,
+                    fillColor: AppColor.secondary.withOpacity(0.25),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                    hintText: 'Username',
+                    hintStyle: TextStyle(
+                      color: AppColor.fonts.withOpacity(0.5),
+                      fontSize: 14,
                     ),
                   ),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(15.0),
-                child: RichText(
-                  text: TextSpan(
-                    children: [
-                      WidgetSpan(
-                        alignment: PlaceholderAlignment.middle,
-                        child: Text(
-                          'Already have an account?',
-                          style: TextStyle(
-                            color: AppColor.fonts,
-                          ),
-                        ),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    isDense: true,
+                    filled: true,
+                    fillColor: AppColor.secondary.withOpacity(0.25),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                    hintText: 'Email Address',
+                    hintStyle: TextStyle(
+                      color: AppColor.fonts.withOpacity(0.5),
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: TextFormField(
+                  decoration: InputDecoration(
+                    isDense: true,
+                    filled: true,
+                    fillColor: AppColor.secondary.withOpacity(0.25),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                    hintText: 'Phone Number',
+                    hintStyle: TextStyle(
+                      color: AppColor.fonts.withOpacity(0.5),
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: TextFormField(
+                  obscureText: isVisible.value,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    filled: true,
+                    fillColor: AppColor.secondary.withOpacity(0.25),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none),
+                    hintText: 'Password',
+                    hintStyle: TextStyle(
+                      color: AppColor.fonts.withOpacity(0.5),
+                      fontSize: 14,
+                    ),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        isVisible.value = !isVisible.value;
+                      },
+                      icon: isVisible.value
+                          ? Icon(
+                              Icons.visibility_off,
+                              color: AppColor.fonts,
+                              size: 15,
+                            )
+                          : Icon(
+                              Icons.visibility,
+                              color: AppColor.fonts,
+                              size: 15,
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: TextFormField(
+                  obscureText: isVisible.value,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    filled: true,
+                    fillColor: AppColor.secondary.withOpacity(0.25),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none),
+                    hintText: 'Confirm Password',
+                    hintStyle: TextStyle(
+                      color: AppColor.fonts.withOpacity(0.5),
+                      fontSize: 14,
+                    ),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        isVisible.value = !isVisible.value;
+                      },
+                      icon: isVisible.value
+                          ? Icon(
+                              Icons.visibility_off,
+                              color: AppColor.fonts,
+                              size: 15,
+                            )
+                          : Icon(
+                              Icons.visibility,
+                              color: AppColor.fonts,
+                              size: 15,
+                            ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: Text('Sing Up'),
+                  style: ButtonStyle(
+                    foregroundColor:
+                        MaterialStateProperty.all<Color>(AppColor.white),
+                    overlayColor: MaterialStateProperty.all<Color>(
+                      AppColor.white.withOpacity(0.1),
+                    ),
+                    minimumSize: MaterialStateProperty.all(
+                      Size(MediaQuery.of(context).size.width, 45),
+                    ),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      const TextSpan(text: '  '),
-                      WidgetSpan(
-                        alignment: PlaceholderAlignment.middle,
-                        child: InkWell(
-                          onTap: () {
-                            Get.to(LoginScreen());
-                          },
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    'Already have an account? Please',
+                    style: TextStyle(
+                      color: AppColor.fonts.withOpacity(0.5),
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: InkWell(
+                    onTap: () {
+                      Get.off(LoginScreen());
+                    },
+                    child: Text(
+                      'Sign In',
+                      style: TextStyle(
+                        color: AppColor.fonts,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      children: [
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.middle,
                           child: Text(
-                            'Sign In',
+                            'By signing of creating account, you agree with our ',
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: AppColor.primary,
+                              color: AppColor.fonts,
+                              fontSize: 14,
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.middle,
+                          child: InkWell(
+                            onTap: () {},
+                            child: Text(
+                              'Terms of Service',
+                              style: TextStyle(
+                                color: AppColor.red,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.middle,
+                          child: Text(
+                            ' & ',
+                            style: TextStyle(
+                              color: AppColor.fonts,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.middle,
+                          child: InkWell(
+                            onTap: () {},
+                            child: Text(
+                              'Privacy Policy',
+                              style: TextStyle(
+                                color: AppColor.red,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

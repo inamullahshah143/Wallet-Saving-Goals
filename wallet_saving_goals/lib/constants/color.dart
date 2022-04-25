@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 
 class AppColor {
-  static MaterialColor appThemeColor = const MaterialColor(0xFF7BAEF4, {
-    50: Color.fromRGBO(123, 174, 244, .1),
-    100: Color.fromRGBO(123, 174, 244, .2),
-    200: Color.fromRGBO(123, 174, 244, .3),
-    300: Color.fromRGBO(123, 174, 244, .4),
-    400: Color.fromRGBO(123, 174, 244, .5),
-    500: Color.fromRGBO(123, 174, 244, .6),
-    600: Color.fromRGBO(123, 174, 244, .7),
-    700: Color.fromRGBO(123, 174, 244, .8),
-    800: Color.fromRGBO(123, 174, 244, .9),
-    900: Color.fromRGBO(123, 174, 244, 1),
+  static MaterialColor appThemeColor = const MaterialColor(0xFFF55951, {
+    50: Color.fromRGBO(245, 89, 81, .1),
+    100: Color.fromRGBO(245, 89, 81, .2),
+    200: Color.fromRGBO(245, 89, 81, .3),
+    300: Color.fromRGBO(245, 89, 81, .4),
+    400: Color.fromRGBO(245, 89, 81, .5),
+    500: Color.fromRGBO(245, 89, 81, .6),
+    600: Color.fromRGBO(245, 89, 81, .7),
+    700: Color.fromRGBO(245, 89, 81, .8),
+    800: Color.fromRGBO(245, 89, 81, .9),
+    900: Color.fromRGBO(245, 89, 81, 1),
   });
-  static Color primary = const Color.fromRGBO(123, 174, 244, 1);
-  static Color secondary = const Color.fromARGB(255, 220, 228, 234);
+  static const primary = Color.fromRGBO(245, 89, 81,1);
+  static const secondary = Color.fromARGB(255, 200, 200, 200);
   static Color fonts = const Color(0XFF504B4D);
   static Color white = const Color.fromARGB(255, 255, 255, 255);
   static Color red = Colors.red;

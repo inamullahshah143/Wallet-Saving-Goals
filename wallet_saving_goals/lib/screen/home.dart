@@ -1,13 +1,26 @@
-import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
+import 'package:circle_nav_bar/circle_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttericon/font_awesome_icons.dart';
-import 'package:get/get.dart';
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/screen/home/dashboard.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
-  final bottomIndex = 1.obs;
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int bottomIndex;
+  @override
+  void initState() {
+    bottomIndex = 1;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +29,13 @@ class HomeScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0.0,
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            if (ZoomDrawer.of(context).isOpen()) {
+              ZoomDrawer.of(context).close();
+            } else {
+              ZoomDrawer.of(context).open();
+            }
+          },
           icon: Icon(
             Icons.menu,
             color: AppColor.fonts,
@@ -33,28 +52,56 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: Obx(
-          () {
-            return bottomIndex.value == 0
-                ? Container()
-                : bottomIndex.value == 1
+        child: bottomIndex == 0
+            ? Container()
+            : bottomIndex == 1
+                ? Dashboard()
+                : bottomIndex == 2
                     ? Container()
-                    : bottomIndex.value == 2
-                        ? Container()
-                        : Container();
-          },
-        ),
+                    : Container(),
       ),
-      bottomNavigationBar: FancyBottomNavigation(
-        initialSelection: 1,
-        tabs: [
-          TabData(iconData: Icons.favorite, title: "Projects"),
-          TabData(iconData: FontAwesome.home, title: "Home"),
-          TabData(iconData: Icons.person, title: "Profile")
+      bottomNavigationBar: CircleNavBar(
+        activeIcons: [
+          Icon(
+            FontAwesome5.hand_holding_usd,
+            color: AppColor.white,
+          ),
+          Icon(
+            FontAwesome5.home,
+            color: AppColor.white,
+          ),
+          Icon(
+            FontAwesome5.users,
+            color: AppColor.white,
+          ),
         ],
-        onTabChangedListener: (position) {
-          bottomIndex.value = position;
+        inactiveIcons: [
+          Text(
+            "Kamittee's",
+            style: TextStyle(
+              color: AppColor.white,
+            ),
+          ),
+          Text("Home",
+            style: TextStyle(
+              color: AppColor.white,
+            ),),
+          Text("Contacts",
+            style: TextStyle(
+              color: AppColor.white,
+            ),),
+        ],
+        color: AppColor.primary,
+        height: 50,
+        circleWidth: 50,
+        initIndex: 1,
+        onChanged: (index) {
+          setState(() {
+            bottomIndex = index;
+          });
         },
+        shadowColor: AppColor.primary.withOpacity(0.5),
+        elevation: 5,
       ),
     );
   }
