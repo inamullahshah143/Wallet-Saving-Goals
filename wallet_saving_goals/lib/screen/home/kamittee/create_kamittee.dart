@@ -17,6 +17,8 @@ class _CreateKamitteeState extends State<CreateKamittee> {
   final kamitteeAmount = '1000.0'.obs;
   final kamitteeDuration = '5'.obs;
   TextEditingController startedDate = TextEditingController();
+
+  final kamitteePurpose = ''.obs;
   @override
   Widget build(BuildContext context) {
     final steps = [
@@ -256,7 +258,7 @@ class _CreateKamitteeState extends State<CreateKamittee> {
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
-                    color: AppColor.primary.withOpacity(0.075),
+                    color: AppColor.primary,
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Column(
@@ -266,7 +268,7 @@ class _CreateKamitteeState extends State<CreateKamittee> {
                         child: Text(
                           'Your total kamittee amount will be',
                           style: TextStyle(
-                            color: AppColor.fonts.withOpacity(0.5),
+                            color: AppColor.white.withOpacity(0.75),
                             fontSize: 16,
                           ),
                         ),
@@ -276,7 +278,7 @@ class _CreateKamitteeState extends State<CreateKamittee> {
                         child: Text(
                           '5000.00 PKR',
                           style: TextStyle(
-                            color: AppColor.fonts,
+                            color: AppColor.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 28,
                           ),
@@ -297,13 +299,148 @@ class _CreateKamitteeState extends State<CreateKamittee> {
         },
       ),
       CoolStep(
-        title: 'Select your role',
-        subtitle: 'Choose a role that better defines you',
-        content: Container(
-          child: Row(
-            children: <Widget>[],
-          ),
+        title: 'Online Verification',
+        subtitle: 'We Respect Your Privacy.',
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            SizedBox(
+              height: 20,
+            ),
+            Text(
+              'Kamittee will ask for access to your phone data. We will use this data to assess your profile and application for an Kamittee App.',
+              style: TextStyle(color: AppColor.fonts),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Text(
+              'We will not view or store your personal information. Only the pattern of your phone usage is determined.',
+              style: TextStyle(color: AppColor.fonts),
+            ),
+            SizedBox(
+              height: 30,
+            ),
+            Text(
+              'Phone Permissions Required',
+              style: TextStyle(
+                  fontSize: 20,
+                  color: AppColor.fonts,
+                  fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Text(
+              'Enabling Contacts, Calendar, Storage and Registered Accounts will help Kamittee collect data to assess your creditworthiness and accept your application',
+              style: TextStyle(color: AppColor.fonts),
+            ),
+          ],
         ),
+        validation: () {
+          return null;
+        },
+      ),
+      CoolStep(
+        title: 'Verify your identity',
+        subtitle:
+            'To protect you and all our users, we are require your CNIC and selfie to confirm your identity and ensure your account is secure.',
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[],
+        ),
+        validation: () {
+          return null;
+        },
+      ),
+      CoolStep(
+        title: 'What are you saving for',
+        subtitle: 'Select the purpose for savings',
+        content: Obx(() {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              RadioListTile(
+                value: 'Repay a Loan',
+                onChanged: (value) {
+                  kamitteePurpose.value = value;
+                },
+                groupValue: kamitteePurpose.value,
+                title: Text('Repay a Loan'),
+              ),
+              RadioListTile(
+                value: 'Build Long-Term savings',
+                onChanged: (value) {
+                  kamitteePurpose.value = value;
+                },
+                groupValue: kamitteePurpose.value,
+                title: Text('Build Long-Term savings'),
+              ),
+              RadioListTile(
+                value: 'Short-Term need',
+                onChanged: (value) {
+                  kamitteePurpose.value = value;
+                },
+                groupValue: kamitteePurpose.value,
+                title: Text('Short-Term need'),
+              ),
+              RadioListTile(
+                value: 'Wedding',
+                onChanged: (value) {
+                  kamitteePurpose.value = value;
+                },
+                groupValue: kamitteePurpose.value,
+                title: Text('Wedding'),
+              ),
+              RadioListTile(
+                value: 'Expenses',
+                onChanged: (value) {
+                  kamitteePurpose.value = value;
+                },
+                groupValue: kamitteePurpose.value,
+                title: Text('Expenses'),
+              ),
+              RadioListTile(
+                value: 'Education',
+                onChanged: (value) {
+                  kamitteePurpose.value = value;
+                },
+                groupValue: kamitteePurpose.value,
+                title: Text('Education'),
+              ),
+              RadioListTile(
+                value: 'other',
+                onChanged: (value) {
+                  kamitteePurpose.value = value;
+                },
+                groupValue: kamitteePurpose.value,
+                title: Text('Other'),
+              ),
+              Obx(
+                () {
+                  return kamitteePurpose.value == 'other'
+                      ? Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextFormField(
+                            keyboardType: TextInputType.text,
+                            decoration: InputDecoration(
+                              hintText: 'State Purpose',
+                              fillColor: AppColor.secondary.withOpacity(0.25),
+                              isDense: true,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                              filled: true,
+                            ),
+                          ),
+                        )
+                      : Container();
+                },
+              ),
+            ],
+          );
+        }),
         validation: () {
           return null;
         },
@@ -320,7 +457,14 @@ class _CreateKamitteeState extends State<CreateKamittee> {
           },
           steps: steps,
           config: CoolStepperConfig(
-            iconColor: AppColor.primary,
+            titleTextStyle: TextStyle(
+              color: AppColor.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+            subtitleTextStyle: TextStyle(color: AppColor.white),
+            headerColor: AppColor.primary,
+            iconColor: AppColor.white,
             backText: 'Back',
             finalText: 'Get Started',
             nextText: 'Next',
