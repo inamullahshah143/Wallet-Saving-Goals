@@ -41,6 +41,13 @@ dependencies:
   circle_nav_bar: ^1.0.2
   cool_stepper: ^1.2.1
   intl: ^0.17.0
+  google_sign_in: ^5.3.0
+  firebase_auth: ^3.3.17
+  firebase_core: ^1.16.0
+  cloud_firestore: ^3.1.14
+  shared_preferences: ^2.0.13
+  cool_alert: ^1.1.0
+  change_app_package_name: ^1.0.0
 
 dev_dependencies:
   flutter_test:

@@ -4,16 +4,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
-import 'package:wallet_saving_goals/screen/home/dashboard.dart';
 
-class HomeScreen extends StatefulWidget {
-  HomeScreen({Key key}) : super(key: key);
+import 'kamittee_holder/holder_dashboard.dart';
+
+class HolderHomeScreen extends StatefulWidget {
+  const HolderHomeScreen({Key key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HolderHomeScreen> createState() => _HolderHomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HolderHomeScreenState extends State<HolderHomeScreen> {
   int bottomIndex;
   @override
   void initState() {
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: bottomIndex == 0
             ? Container()
             : bottomIndex == 1
-                ? Dashboard()
+                ? HolderDashboard()
                 : bottomIndex == 2
                     ? Container()
                     : Container(),
@@ -82,14 +83,18 @@ class _HomeScreenState extends State<HomeScreen> {
               color: AppColor.white,
             ),
           ),
-          Text("Home",
+          Text(
+            "Home",
             style: TextStyle(
               color: AppColor.white,
-            ),),
-          Text("Contacts",
+            ),
+          ),
+          Text(
+            "Contacts",
             style: TextStyle(
               color: AppColor.white,
-            ),),
+            ),
+          ),
         ],
         color: AppColor.primary,
         height: 50,

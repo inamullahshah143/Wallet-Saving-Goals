@@ -1,5 +1,11 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/main.dart';
+import 'package:wallet_saving_goals/screen/auth/login_screen.dart';
+import 'package:wallet_saving_goals/screen/auth/splash_screen.dart';
+import 'package:wallet_saving_goals/utils/auth_helper.dart';
 
 class MenuScreen extends StatelessWidget {
   const MenuScreen({Key key}) : super(key: key);
@@ -19,12 +25,13 @@ class MenuScreen extends StatelessWidget {
               children: [
                 const CircleAvatar(
                   radius: 50,
+                  backgroundImage: AssetImage('assets/images/logo.png'),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 10.0, vertical: 10.0),
                   child: Text(
-                    'Username',
+                    prefs.getString('Username'),
                     style: TextStyle(
                       fontSize: 16,
                       color: AppColor.fonts,
@@ -35,7 +42,7 @@ class MenuScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Text(
-                    'mail@email.com',
+                    prefs.getString('Email'),
                     style: TextStyle(
                       color: AppColor.fonts,
                     ),
@@ -55,14 +62,31 @@ class MenuScreen extends StatelessWidget {
                 ),
                 title: Text('Edit Profile'),
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.format_list_bulleted_outlined,
-                  color: AppColor.fonts,
-                  size: 20,
-                ),
-                title: Text('All Records'),
-              ),
+              prefs.getString('UserType') == 'host'
+                  ? ListTile(
+                      onTap: () {
+                        prefs.setString('UserType', 'holder');
+                        Get.off(SplashScreen());
+                      },
+                      leading: Icon(
+                        Icons.swipe,
+                        color: AppColor.fonts,
+                        size: 20,
+                      ),
+                      title: Text('Switch to Holder'),
+                    )
+                  : ListTile(
+                      onTap: () {
+                        prefs.setString('UserType', 'host');
+                        Get.off(SplashScreen());
+                      },
+                      leading: Icon(
+                        Icons.swipe,
+                        color: AppColor.fonts,
+                        size: 20,
+                      ),
+                      title: Text('Switch to Host'),
+                    ),
               ListTile(
                 leading: Icon(
                   Icons.share,
@@ -88,12 +112,28 @@ class MenuScreen extends StatelessWidget {
                 title: Text('Privacy Policy'),
               ),
               ListTile(
+                onTap: () {
+                  CoolAlert.show(
+                    context: context,
+                    barrierDismissible: false,
+                    type: CoolAlertType.warning,
+                    text: 'Are you sure you want to Logout?',
+                    onConfirmBtnTap: () {
+                      AuthenticationHelper().signOut().whenComplete(() {
+                        prefs.clear();
+                        Get.off(LoginScreen());
+                      });
+                    },
+                    confirmBtnText: 'Logout',
+                    showCancelBtn: true,
+                  );
+                },
                 leading: Icon(
                   Icons.logout_outlined,
                   color: AppColor.red,
                   size: 20,
                 ),
-                title: Text('Log Out'),
+                title: Text('Logout'),
               ),
             ],
           ),

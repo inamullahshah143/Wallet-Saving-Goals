@@ -1,11 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.wallet_saving_goals">
+    package="com.zence.wallet_saving_goals">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
    <application
-        android:label="Kamittee"
+        android:label="Wallet Saving Goals"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
-            android:name=".MainActivity"
+            android:name=".MainActivityP"
             android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"

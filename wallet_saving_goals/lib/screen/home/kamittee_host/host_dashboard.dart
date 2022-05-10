@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
-import 'package:wallet_saving_goals/screen/home/kamittee/create_kamittee.dart';
+import 'package:wallet_saving_goals/screen/home/kamittee_host/create_kamittee.dart';
 
-class Dashboard extends StatelessWidget {
-  const Dashboard({Key key}) : super(key: key);
+class HostDashboard extends StatelessWidget {
+  const HostDashboard({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

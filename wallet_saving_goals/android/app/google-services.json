@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "676215343831",
+    "project_id": "wallet-saving-goals",
+    "storage_bucket": "wallet-saving-goals.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:676215343831:android:0d745e89baff0701c27e92",
+        "android_client_info": {
+          "package_name": "com.zence.wallet_saving_goals"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "676215343831-2k137nrbnrfo3mc5laf47q1l1hncncq5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBO8j-i2VKRc95-HfS7q8ElZhp72OHyMyM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "676215343831-2k137nrbnrfo3mc5laf47q1l1hncncq5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
