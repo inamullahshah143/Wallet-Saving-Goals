@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:cool_stepper/cool_stepper.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
 
-CoolStep step3() {
+CoolStep step3(cnicFront, File cnicBack, File selfie) {
   return CoolStep(
     title: 'Verify your identity',
     subtitle:
@@ -26,44 +30,54 @@ CoolStep step3() {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              InkWell(
-                onTap: () {},
-                child: Container(
-                  height: 120,
-                  width: 120,
-                  decoration: BoxDecoration(
-                    color: AppColor.primary,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.secondary.withOpacity(0.5),
-                        blurRadius: 1,
-                        spreadRadius: 1,
-                        offset: const Offset(0, 0),
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.camera_enhance_outlined,
-                          color: AppColor.white,
-                          size: 30,
-                        ),
-                        SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          'CNIC Front',
-                          style: TextStyle(color: AppColor.white, fontSize: 14),
+              Obx(() {
+                return InkWell(
+                  onTap: () {
+                    cnicFront.value =
+                        KamitteeHelper().pickImage().whenComplete(() {
+                      print(cnicFront.value);
+                    });
+                  },
+                  child: Container(
+                    height: 120,
+                    width: 120,
+                    decoration: BoxDecoration(
+                      color: AppColor.primary,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColor.secondary.withOpacity(0.5),
+                          blurRadius: 1,
+                          spreadRadius: 1,
+                          offset: const Offset(0, 0),
                         ),
                       ],
                     ),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            cnicFront.value == null
+                                ? Icons.camera_enhance_outlined
+                                : Icons.done,
+                            color: AppColor.white,
+                            size: 30,
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            'CNIC Front',
+                            style:
+                                TextStyle(color: AppColor.white, fontSize: 14),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              }),
               const SizedBox(
                 width: 25,
               ),

@@ -1,16 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
-import 'package:wallet_saving_goals/screen/auth/login_screen.dart';
+import 'package:wallet_saving_goals/screen/auth/splash_screen.dart';
 
 SharedPreferences prefs;
+FirebaseAuth _auth;
+get user => _auth.currentUser;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp().whenComplete(() async {
+
+  _auth = await FirebaseAuth.instance;
+  });
   prefs = await SharedPreferences.getInstance();
-  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -77,7 +83,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: LoginScreen(),
+      home: SplashScreen(),
     );
   }
 }

@@ -1,17 +1,46 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_stepper/cool_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 
-CoolStep step1(
-  context,
-  _formKey,
-  kamitteeAmount,
-  kamitteeDuration,
-  startedDate,
-) {
+import '../../../../main.dart';
+
+class Members {
+  final String id;
+  final String name;
+
+  Members({
+    this.id,
+    this.name,
+  });
+}
+
+Future<List<MultiSelectItem<Members>>> getMembers() async {
+  List<Members> members = [];
+  await FirebaseFirestore.instance.collection('user').get().then((value) {
+    for (var item in value.docs) {
+      if (item.id != user.uid) {
+        members.add(
+          Members(
+            id: item.id.toString(),
+            name: item.data()['fullName'],
+          ),
+        );
+      }
+    }
+  });
+  return members
+      .map((member) => MultiSelectItem<Members>(member, member.name))
+      .toList();
+}
+
+CoolStep step1(context, _formKey, kamitteeAmount, kamitteeDuration,
+    kamitteeMembers, startedDate, otherKamitteeAmount, otherKamitteeDuration) {
   return CoolStep(
     title: 'Choose Kamittee',
     subtitle: 'Please fill some of the basic information to get started',
@@ -43,6 +72,8 @@ CoolStep step1(
                   isDense: true,
                   prefixIcon: Icon(
                     FontAwesome5.money_bill_wave,
+                    size: 20,
+                    color: AppColor.fonts,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
@@ -88,6 +119,9 @@ CoolStep step1(
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
+                        onChanged: (value) {
+                          otherKamitteeAmount.value = value;
+                        },
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           hintText: 'Other Amount',
@@ -128,6 +162,8 @@ CoolStep step1(
                     isDense: true,
                     prefixIcon: Icon(
                       FontAwesome5.calendar_alt,
+                      size: 20,
+                      color: AppColor.fonts,
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -174,6 +210,9 @@ CoolStep step1(
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
+                        onChanged: (value) {
+                          otherKamitteeDuration.value = value;
+                        },
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           hintText: 'Other Duration',
@@ -189,6 +228,78 @@ CoolStep step1(
                     )
                   : Container();
             },
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Kamittee Members',
+              style: TextStyle(
+                color: AppColor.fonts,
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColor.secondary.withOpacity(0.25),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 15.0,
+                      top: 15,
+                      bottom: 15,
+                      right: 5,
+                    ),
+                    child: Icon(
+                      FontAwesome.users,
+                      size: 20,
+                      color: AppColor.fonts,
+                    ),
+                  ),
+                  Flexible(
+                    child: Padding(
+                      padding:
+                          const EdgeInsets.only(right: 15.0, top: 5, bottom: 5),
+                      child: FutureBuilder(
+                        future: getMembers(),
+                        builder: (context, snapshot) {
+                          return MultiSelectDialogField(
+                            decoration: BoxDecoration(
+                              border: Border(),
+                            ),
+                            items: snapshot.data,
+                            searchable: true,
+                            title: Text("Memberss"),
+                            selectedColor: AppColor.appThemeColor,
+                            buttonIcon: Icon(
+                              Icons.arrow_drop_down,
+                              color: AppColor.fonts.withOpacity(0.75),
+                            ),
+                            buttonText: Text(
+                              "Select Members",
+                              style: TextStyle(
+                                color: AppColor.fonts,
+                                fontSize: 16,
+                              ),
+                            ),
+                            onConfirm: (results) {
+                              kamitteeMembers = results;
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -232,6 +343,8 @@ CoolStep step1(
                 helperText: 'The date from which the kamittee begin\'s',
                 prefixIcon: Icon(
                   FontAwesome5.calendar,
+                  size: 20,
+                  color: AppColor.fonts,
                 ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -261,17 +374,28 @@ CoolStep step1(
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Text(
-                      '5000.00 PKR',
-                      style: TextStyle(
-                        color: AppColor.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 28,
+                  Obx(() {
+                    return Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Text(
+                        kamitteeAmount.value != 'other' &&
+                                kamitteeDuration.value != 'other'
+                            ? '${double.parse(kamitteeAmount.value) * double.parse(kamitteeDuration.value)}0 PKR'
+                            : kamitteeDuration.value == 'other' &&
+                                    kamitteeAmount.value != 'other'
+                                ? '${double.parse(kamitteeAmount.value) * double.parse(otherKamitteeDuration.value)}0 PKR'
+                                : kamitteeAmount.value == 'other' &&
+                                        kamitteeDuration.value != 'other'
+                                    ? '${double.parse(otherKamitteeAmount.value) * double.parse(kamitteeDuration.value)}0 PKR'
+                                    : '${double.parse(otherKamitteeAmount.value) * double.parse(otherKamitteeDuration.value)}0 PKR',
+                        style: TextStyle(
+                          color: AppColor.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 28,
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  }),
                 ],
               ),
             ),

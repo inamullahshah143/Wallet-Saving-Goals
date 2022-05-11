@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/screen/home/my_kamittees.dart';
+import 'package:wallet_saving_goals/screen/home/my_contacts.dart';
 
 import 'kamittee_holder/holder_dashboard.dart';
 
@@ -54,11 +56,11 @@ class _HolderHomeScreenState extends State<HolderHomeScreen> {
       ),
       body: SafeArea(
         child: bottomIndex == 0
-            ? Container()
+            ? MyKamittees()
             : bottomIndex == 1
                 ? HolderDashboard()
                 : bottomIndex == 2
-                    ? Container()
+                    ? MyContacts()
                     : Container(),
       ),
       bottomNavigationBar: CircleNavBar(

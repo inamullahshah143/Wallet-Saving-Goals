@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/screen/components/invitation_card.dart';
 
 class HolderDashboard extends StatelessWidget {
   const HolderDashboard({Key key}) : super(key: key);
@@ -44,14 +45,30 @@ class HolderDashboard extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: Center(
-              child: SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Column(
-                  children: [],
-                ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text(
+              'Invitations',
+              style: TextStyle(
+                color: AppColor.fonts,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
               ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              physics: BouncingScrollPhysics(),
+              itemCount: 1,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return InvitationCard(
+                  amount: '100000.0',
+                  duration: '10',
+                  members: '10',
+                  title: 'Education',
+                );
+              },
             ),
           ),
         ],

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cool_stepper/cool_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,15 +20,29 @@ class _CreateKamitteeState extends State<CreateKamittee> {
   final _formKey = GlobalKey<FormState>();
   final kamitteeAmount = '1000.0'.obs;
   final kamitteeDuration = '5'.obs;
+  final otherKamitteeAmount = '1.0'.obs;
+  final otherKamitteeDuration = '1'.obs;
+  final kamitteeMembers = [].obs;
   TextEditingController startedDate = TextEditingController();
-
   final kamitteePurpose = ''.obs;
+  final cnicFront = null.obs;
+  File cnicBack;
+  File selfie;
+
   @override
   Widget build(BuildContext context) {
     List<CoolStep> steps = [
-      step1(context, _formKey, kamitteeAmount, kamitteeDuration, startedDate),
+      step1(
+          context,
+          _formKey,
+          kamitteeAmount,
+          kamitteeDuration,
+          kamitteeMembers,
+          startedDate,
+          otherKamitteeAmount,
+          otherKamitteeDuration),
       step2(),
-      step3(),
+      step3(cnicFront, cnicBack, selfie),
       step4(kamitteePurpose),
     ];
 

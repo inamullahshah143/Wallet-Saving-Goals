@@ -24,7 +24,8 @@ class MenuScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const CircleAvatar(
-                  radius: 50,
+                  radius: 100,
+                  backgroundColor: Colors.transparent,
                   backgroundImage: AssetImage('assets/images/logo.png'),
                 ),
                 Padding(
@@ -65,8 +66,20 @@ class MenuScreen extends StatelessWidget {
               prefs.getString('UserType') == 'host'
                   ? ListTile(
                       onTap: () {
-                        prefs.setString('UserType', 'holder');
-                        Get.off(SplashScreen());
+                        CoolAlert.show(
+                          context: context,
+                          confirmBtnColor: AppColor.appThemeColor,
+                          barrierDismissible: false,
+                          type: CoolAlertType.confirm,
+                          text: 'you want to switch to the holder',
+                          onConfirmBtnTap: () {
+                            prefs.setString('UserType', 'holder');
+                            Get.off(SplashScreen());
+                          },
+                          confirmBtnText: 'Switch',
+                          backgroundColor: AppColor.fonts,
+                          showCancelBtn: true,
+                        );
                       },
                       leading: Icon(
                         Icons.swipe,
@@ -77,8 +90,20 @@ class MenuScreen extends StatelessWidget {
                     )
                   : ListTile(
                       onTap: () {
-                        prefs.setString('UserType', 'host');
-                        Get.off(SplashScreen());
+                        CoolAlert.show(
+                          context: context,
+                          confirmBtnColor: AppColor.appThemeColor,
+                          barrierDismissible: false,
+                          type: CoolAlertType.confirm,
+                          text: 'you want to switch to the host',
+                          onConfirmBtnTap: () {
+                            prefs.setString('UserType', 'host');
+                            Get.off(SplashScreen());
+                          },
+                          confirmBtnText: 'Switch',
+                          backgroundColor: AppColor.fonts,
+                          showCancelBtn: true,
+                        );
                       },
                       leading: Icon(
                         Icons.swipe,
@@ -115,9 +140,11 @@ class MenuScreen extends StatelessWidget {
                 onTap: () {
                   CoolAlert.show(
                     context: context,
+                    backgroundColor: AppColor.fonts,
+                    confirmBtnColor: AppColor.appThemeColor,
                     barrierDismissible: false,
-                    type: CoolAlertType.warning,
-                    text: 'Are you sure you want to Logout?',
+                    type: CoolAlertType.confirm,
+                    text: 'you want to Logout?',
                     onConfirmBtnTap: () {
                       AuthenticationHelper().signOut().whenComplete(() {
                         prefs.clear();

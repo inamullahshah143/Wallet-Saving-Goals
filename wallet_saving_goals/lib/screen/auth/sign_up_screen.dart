@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/main.dart';
 import 'package:wallet_saving_goals/screen/auth/login_screen.dart';
 import 'package:wallet_saving_goals/screen/components/components.dart';
 import 'package:wallet_saving_goals/screen/drawer_menu.dart';
@@ -17,7 +19,6 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final accountType = ''.obs;
   final isVisible = true.obs;
 
   final formKey = GlobalKey<FormState>();
@@ -26,9 +27,6 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController phoneNo = TextEditingController();
   final TextEditingController password = TextEditingController();
   final TextEditingController confirmPassword = TextEditingController();
-  //Firebase
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  get user => _auth.currentUser;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,153 +72,169 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TextFormField(
-                  controller: fullName,
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'please enter your full name';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    isDense: true,
-                    filled: true,
-                    fillColor: AppColor.secondary.withOpacity(0.25),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
+              Form(
+                key: formKey,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: TextFormField(
+                        controller: fullName,
+                        validator: (value) {
+                          if (value.isEmpty) {
+                            return 'please enter your full name';
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          isDense: true,
+                          filled: true,
+                          fillColor: AppColor.secondary.withOpacity(0.25),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                          hintText: 'Username',
+                          hintStyle: TextStyle(
+                            color: AppColor.fonts.withOpacity(0.5),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
                     ),
-                    hintText: 'Username',
-                    hintStyle: TextStyle(
-                      color: AppColor.fonts.withOpacity(0.5),
-                      fontSize: 14,
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: TextFormField(
+                        controller: email,
+                        validator: (value) => Helper.validateEmail(value),
+                        decoration: InputDecoration(
+                          isDense: true,
+                          filled: true,
+                          fillColor: AppColor.secondary.withOpacity(0.25),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                          hintText: 'Email Address',
+                          hintStyle: TextStyle(
+                            color: AppColor.fonts.withOpacity(0.5),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TextFormField(
-                  controller: email,
-                  validator: (value) => Helper.validateEmail(value),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    filled: true,
-                    fillColor: AppColor.secondary.withOpacity(0.25),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: TextFormField(
+                        controller: phoneNo,
+                        validator: (value) => Helper.validateMobile(value),
+                        decoration: InputDecoration(
+                          isDense: true,
+                          filled: true,
+                          fillColor: AppColor.secondary.withOpacity(0.25),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                          hintText: 'Phone Number',
+                          hintStyle: TextStyle(
+                            color: AppColor.fonts.withOpacity(0.5),
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
                     ),
-                    hintText: 'Email Address',
-                    hintStyle: TextStyle(
-                      color: AppColor.fonts.withOpacity(0.5),
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TextFormField(
-                  controller: phoneNo,
-                  validator: (value) => Helper.validateMobile(value),
-                  decoration: InputDecoration(
-                    isDense: true,
-                    filled: true,
-                    fillColor: AppColor.secondary.withOpacity(0.25),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                    hintText: 'Phone Number',
-                    hintStyle: TextStyle(
-                      color: AppColor.fonts.withOpacity(0.5),
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TextFormField(
-                  controller: password,
-                  validator: (value) => Helper.validatePassword(value),
-                  obscureText: isVisible.value,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    filled: true,
-                    fillColor: AppColor.secondary.withOpacity(0.25),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none),
-                    hintText: 'Password',
-                    hintStyle: TextStyle(
-                      color: AppColor.fonts.withOpacity(0.5),
-                      fontSize: 14,
-                    ),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        isVisible.value = !isVisible.value;
-                      },
-                      icon: isVisible.value
-                          ? Icon(
-                              Icons.visibility_off,
-                              color: AppColor.fonts,
-                              size: 15,
-                            )
-                          : Icon(
-                              Icons.visibility,
-                              color: AppColor.fonts,
-                              size: 15,
+                    Obx(
+                      () {
+                        return Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: TextFormField(
+                            controller: password,
+                            validator: (value) =>
+                                Helper.validatePassword(value),
+                            obscureText: isVisible.value,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              filled: true,
+                              fillColor: AppColor.secondary.withOpacity(0.25),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none),
+                              hintText: 'Password',
+                              hintStyle: TextStyle(
+                                color: AppColor.fonts.withOpacity(0.5),
+                                fontSize: 14,
+                              ),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  isVisible.value = !isVisible.value;
+                                },
+                                icon: isVisible.value
+                                    ? Icon(
+                                        Icons.visibility_off,
+                                        color: AppColor.fonts,
+                                        size: 15,
+                                      )
+                                    : Icon(
+                                        Icons.visibility,
+                                        color: AppColor.fonts,
+                                        size: 15,
+                                      ),
+                              ),
                             ),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TextFormField(
-                  controller: confirmPassword,
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'please enter your confirm password';
-                    } else if (value != password.text) {
-                      return 'password doesn\'t match';
-                    }
-                    return null;
-                  },
-                  obscureText: isVisible.value,
-                  decoration: InputDecoration(
-                    isDense: true,
-                    filled: true,
-                    fillColor: AppColor.secondary.withOpacity(0.25),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none),
-                    hintText: 'Confirm Password',
-                    hintStyle: TextStyle(
-                      color: AppColor.fonts.withOpacity(0.5),
-                      fontSize: 14,
-                    ),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        isVisible.value = !isVisible.value;
+                          ),
+                        );
                       },
-                      icon: isVisible.value
-                          ? Icon(
-                              Icons.visibility_off,
-                              color: AppColor.fonts,
-                              size: 15,
-                            )
-                          : Icon(
-                              Icons.visibility,
-                              color: AppColor.fonts,
-                              size: 15,
-                            ),
                     ),
-                  ),
+                    Obx(
+                      () {
+                        return Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: TextFormField(
+                            controller: confirmPassword,
+                            validator: (value) {
+                              if (value.isEmpty) {
+                                return 'please enter your confirm password';
+                              } else if (value != password.text) {
+                                return 'password doesn\'t match';
+                              }
+                              return null;
+                            },
+                            obscureText: isVisible.value,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              filled: true,
+                              fillColor: AppColor.secondary.withOpacity(0.25),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none),
+                              hintText: 'Confirm Password',
+                              hintStyle: TextStyle(
+                                color: AppColor.fonts.withOpacity(0.5),
+                                fontSize: 14,
+                              ),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  isVisible.value = !isVisible.value;
+                                },
+                                icon: isVisible.value
+                                    ? Icon(
+                                        Icons.visibility_off,
+                                        color: AppColor.fonts,
+                                        size: 15,
+                                      )
+                                    : Icon(
+                                        Icons.visibility,
+                                        color: AppColor.fonts,
+                                        size: 15,
+                                      ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ),
               Padding(
@@ -237,21 +251,28 @@ class _SignupScreenState extends State<SignupScreen> {
                       )
                           .then((result) {
                         if (result == null) {
-                          FirebaseFirestore.instance
-                              .collection('user')
-                              .doc(user.uid)
-                              .set({
-                            'fullName': fullName.text,
-                            'email': email.text,
-                            'phoneNo': phoneNo.text,
-                          }).whenComplete(() {
-                            Navigator.of(context).pop();
-                            Components.showSnackBar(
-                                context, 'Welcome ${fullName.text}');
-                            Get.off(MenuDrawer());
-                          }).catchError((e) {
-                            Navigator.of(context).pop();
-                            Components.showSnackBar(context, e);
+                          Timer(Duration(seconds: 2), () async {
+                            await FirebaseFirestore.instance
+                                .collection('user')
+                                .doc(user.uid)
+                                .set({
+                              'fullName': fullName.text,
+                              'email': email.text,
+                              'phoneNo': phoneNo.text,
+                            }).whenComplete(() {
+                              prefs.setString('Username', fullName.text);
+                              prefs.setString('UserID', user.uid);
+                              prefs.setString('Email', email.text);
+                              prefs.setString('PhoneNo', phoneNo.text);
+                              prefs.setString('UserType', 'host');
+                              Navigator.of(context).pop();
+                              Components.showSnackBar(
+                                  context, 'Wellcome ${fullName.text}');
+                              Get.off(MenuDrawer());
+                            }).catchError((e) {
+                              Navigator.of(context).pop();
+                              Components.showSnackBar(context, e);
+                            });
                           });
                         } else {
                           Navigator.of(context).pop();
@@ -259,11 +280,11 @@ class _SignupScreenState extends State<SignupScreen> {
                         }
                       }).catchError((e) {
                         Navigator.of(context).pop();
-                        Components.showSnackBar(context, e);
+                        Components.showSnackBar(context, e.toString());
                       });
                     }
                   },
-                  child: Text('Sing Up'),
+                  child: Text('Sign Up'),
                   style: ButtonStyle(
                     foregroundColor:
                         MaterialStateProperty.all<Color>(AppColor.white),

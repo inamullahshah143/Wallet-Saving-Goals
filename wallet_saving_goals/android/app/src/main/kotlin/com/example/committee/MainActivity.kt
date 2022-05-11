@@ -1,4 +1,4 @@
-package com.example.wallet_saving_goals
+package com.zence.wallet_saving_goals
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -47,7 +47,11 @@ dependencies:
   cloud_firestore: ^3.1.14
   shared_preferences: ^2.0.13
   cool_alert: ^1.1.0
-  change_app_package_name: ^1.0.0
+  multi_select_flutter: ^4.1.2
+  file_picker: ^4.5.1
+  path_provider: ^2.0.10
+  flutter_image_compress: ^1.1.0
+  firebase_storage: ^10.2.15
 
 dev_dependencies:
   flutter_test:

@@ -89,41 +89,47 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: TextFormField(
-                        controller: password,
-                        validator: (value) => Helper.validatePassword(value),
-                        decoration: InputDecoration(
-                          isDense: true,
-                          filled: true,
-                          fillColor: Colors.grey.shade200,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none),
-                          hintText: 'Password',
-                          hintStyle: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 14,
+                    Obx(
+                      () {
+                        return Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: TextFormField(
+                            controller: password,
+                            validator: (value) =>
+                                Helper.validatePassword(value),
+                            obscureText: isVisible.value,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              filled: true,
+                              fillColor: AppColor.secondary.withOpacity(0.25),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none),
+                              hintText: 'Password',
+                              hintStyle: TextStyle(
+                                color: AppColor.fonts.withOpacity(0.5),
+                                fontSize: 14,
+                              ),
+                              suffixIcon: IconButton(
+                                onPressed: () {
+                                  isVisible.value = !isVisible.value;
+                                },
+                                icon: isVisible.value
+                                    ? Icon(
+                                        Icons.visibility_off,
+                                        color: AppColor.fonts,
+                                        size: 15,
+                                      )
+                                    : Icon(
+                                        Icons.visibility,
+                                        color: AppColor.fonts,
+                                        size: 15,
+                                      ),
+                              ),
+                            ),
                           ),
-                          suffixIcon: IconButton(
-                            onPressed: () {
-                              isVisible.value = !isVisible.value;
-                            },
-                            icon: isVisible.value
-                                ? Icon(
-                                    Icons.visibility_off,
-                                    color: AppColor.fonts,
-                                    size: 15,
-                                  )
-                                : Icon(
-                                    Icons.visibility,
-                                    color: AppColor.fonts,
-                                    size: 15,
-                                  ),
-                          ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -179,8 +185,8 @@ class LoginScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(15.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    if (accountType.value != '') {
-                      if (formKey.currentState.validate()) {
+                    if (formKey.currentState.validate()) {
+                      if (accountType.value != '') {
                         Components.showAlertDialog(context);
                         AuthenticationHelper()
                             .signIn(
@@ -203,7 +209,7 @@ class LoginScreen extends StatelessWidget {
                                   'PhoneNo', value.data()['phoneNo']);
                               prefs.setString('UserType', accountType.value);
                               Navigator.of(context).pop();
-                              Components.showSnackBar(context, 'Welcome back');
+                              Components.showSnackBar(context, 'Wellcome back');
                               Get.off(MenuDrawer());
                             });
                           }
@@ -211,14 +217,14 @@ class LoginScreen extends StatelessWidget {
                           Components.showSnackBar(context, e);
                           Navigator.of(context).pop();
                         });
+                      } else {
+                        Navigator.of(context).pop();
+                        Components.showSnackBar(
+                            context, 'please select user type');
                       }
-                    } else {
-                      Navigator.of(context).pop();
-                      Components.showSnackBar(
-                          context, 'please select user type');
                     }
                   },
-                  child: Text('Sing In'),
+                  child: Text('Sign In'),
                   style: ButtonStyle(
                     foregroundColor:
                         MaterialStateProperty.all<Color>(AppColor.white),
@@ -269,7 +275,7 @@ class LoginScreen extends StatelessWidget {
                             prefs.setString('PhoneNo', value.phoneNumber);
                             prefs.setString('UserType', accountType.value);
                             Navigator.of(context).pop();
-                            Components.showSnackBar(context, 'Welcome back');
+                            Components.showSnackBar(context, 'Wellcome back');
                             Get.off(MenuDrawer());
                           });
                         }
