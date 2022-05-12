@@ -250,18 +250,18 @@ class _SignupScreenState extends State<SignupScreen> {
                         context: context,
                       )
                           .then((result) {
-                        if (result == null) {
-                          Timer(Duration(seconds: 2), () async {
+                        if (result != null) {
+                          Timer(Duration(seconds: 3), () async {
                             await FirebaseFirestore.instance
                                 .collection('user')
-                                .doc(user.uid)
+                                .doc(result.user.uid)
                                 .set({
                               'fullName': fullName.text,
                               'email': email.text,
                               'phoneNo': phoneNo.text,
                             }).whenComplete(() {
                               prefs.setString('Username', fullName.text);
-                              prefs.setString('UserID', user.uid);
+                              prefs.setString('UserID', result.user.uid);
                               prefs.setString('Email', email.text);
                               prefs.setString('PhoneNo', phoneNo.text);
                               prefs.setString('UserType', 'host');

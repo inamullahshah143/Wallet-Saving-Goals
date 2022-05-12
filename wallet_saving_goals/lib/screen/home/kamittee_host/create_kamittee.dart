@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cool_stepper/cool_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'steps/step_1.dart';
 import 'steps/step_2.dart';
@@ -23,9 +24,10 @@ class _CreateKamitteeState extends State<CreateKamittee> {
   final otherKamitteeAmount = '1.0'.obs;
   final otherKamitteeDuration = '1'.obs;
   final kamitteeMembers = [].obs;
-  TextEditingController startedDate = TextEditingController();
+  TextEditingController startedDate = TextEditingController(
+      text: '${DateFormat.yMMMEd().format(DateTime.now())}');
   final kamitteePurpose = ''.obs;
-  final cnicFront = null.obs;
+  File cnicFront;
   File cnicBack;
   File selfie;
 
@@ -33,16 +35,17 @@ class _CreateKamitteeState extends State<CreateKamittee> {
   Widget build(BuildContext context) {
     List<CoolStep> steps = [
       step1(
-          context,
-          _formKey,
-          kamitteeAmount,
-          kamitteeDuration,
-          kamitteeMembers,
-          startedDate,
-          otherKamitteeAmount,
-          otherKamitteeDuration),
+        context,
+        _formKey,
+        kamitteeAmount,
+        kamitteeDuration,
+        kamitteeMembers,
+        startedDate,
+        otherKamitteeAmount,
+        otherKamitteeDuration,
+      ),
       step2(),
-      step3(cnicFront, cnicBack, selfie),
+      Step3(cnicFront: cnicFront, cnicBack: cnicBack, selfie: selfie).step3(),
       step4(kamitteePurpose),
     ];
 
@@ -50,7 +53,7 @@ class _CreateKamitteeState extends State<CreateKamittee> {
       backgroundColor: Colors.transparent,
       body: Container(
         child: CoolStepper(
-          showErrorSnackbar: false,
+          showErrorSnackbar: true,
           onCompleted: () {
             print('Steps completed!');
           },

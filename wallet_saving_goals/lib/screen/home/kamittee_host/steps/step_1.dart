@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_stepper/cool_stepper.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
@@ -7,8 +8,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
-
-import '../../../../main.dart';
 
 class Members {
   final String id;
@@ -20,6 +19,8 @@ class Members {
   });
 }
 
+FirebaseAuth _auth;
+get user => _auth.currentUser;
 Future<List<MultiSelectItem<Members>>> getMembers() async {
   List<Members> members = [];
   await FirebaseFirestore.instance.collection('user').get().then((value) {
@@ -210,6 +211,7 @@ CoolStep step1(context, _formKey, kamitteeAmount, kamitteeDuration,
                   ? Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
+                        autofocus: false,
                         onChanged: (value) {
                           otherKamitteeDuration.value = value;
                         },
@@ -404,8 +406,17 @@ CoolStep step1(context, _formKey, kamitteeAmount, kamitteeDuration,
       ),
     ),
     validation: () {
-      if (!_formKey.currentState.validate()) {
-        return 'Fill form correctly';
+      if (kamitteeDuration.value != 'other') {
+        if (kamitteeMembers.length < int.parse(kamitteeDuration.value)) {
+          return 'you must need ${kamitteeDuration.toString()} members for this kamittee';
+        }
+      } else {
+        if (kamitteeMembers.length < int.parse(otherKamitteeDuration.value)) {
+          return 'you must need ${otherKamitteeDuration.toString()} members for this kamittee';
+        }
+      }
+      if (startedDate.text == '') {
+        return 'please initiate kamittee starting date';
       }
       return null;
     },
