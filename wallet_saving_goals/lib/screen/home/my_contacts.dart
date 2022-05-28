@@ -12,14 +12,15 @@ class MyContacts extends StatefulWidget {
 }
 
 class _MyContactsState extends State<MyContacts> {
-  List<Contact> _contacts;
-  List<String> firebaseList;
-  List<String> contactList;
+  List<String> firebaseList = [];
+  List<Map<String, dynamic>> contactList = [];
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       firebaseList = await ContactHelper().getContacts();
+
+      print(firebaseList);
     });
     _askPermissions(null);
     refreshContacts();
@@ -59,36 +60,36 @@ class _MyContactsState extends State<MyContacts> {
   }
 
   Future<void> refreshContacts() async {
-    var contacts = (await ContactsService.getContacts(
-      withThumbnails: true,
-    ));
-    setState(() {
-      _contacts = contacts;
-      
-    });
+    var contacts = (await ContactsService.getContacts());
     for (final contact in contacts) {
-      ContactsService.getAvatar(contact).then((avatar) {
-        if (avatar == null) return;
-        setState(() => contact.avatar = avatar);
+      contactList.add({
+        'name': contact.displayName,
+        'phone_no': contact.phones.first.value
+            .replaceAll('+92', '0')
+            .replaceAll(' ', '')
+            .replaceAll("-", ''),
       });
     }
+    setState(() {
+      contactList
+          .removeWhere((item) => !firebaseList.contains(item['phone_no']));
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: _contacts != null
+        child: contactList != null
             ? ListView.builder(
                 physics: BouncingScrollPhysics(),
-                itemCount: _contacts?.length ?? 0,
+                itemCount: contactList?.length ?? 0,
                 itemBuilder: (BuildContext context, int index) {
-                  Contact c = _contacts?.elementAt(index);
                   return ListTile(
-                    leading: (c.avatar != null && c.avatar.length > 0)
-                        ? CircleAvatar(backgroundImage: MemoryImage(c.avatar))
-                        : CircleAvatar(child: Text(c.initials())),
-                    title: Text(c.displayName ?? ""),
+                    leading: CircleAvatar(
+                        child: Text(contactList[index]['name'][0])),
+                    title: Text(contactList[index]['name'] ?? ""),
+                    subtitle: Text(contactList[index]['phone_no'] ?? ""),
                     trailing: RichText(
                       text: TextSpan(
                         children: [
@@ -119,12 +120,5 @@ class _MyContactsState extends State<MyContacts> {
               ),
       ),
     );
-  }
-
-  void contactOnDeviceHasBeenUpdated(Contact contact) {
-    this.setState(() {
-      var id = _contacts.indexWhere((c) => c.identifier == contact.identifier);
-      _contacts[id] = contact;
-    });
   }
 }
