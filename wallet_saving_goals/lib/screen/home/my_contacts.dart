@@ -19,8 +19,6 @@ class _MyContactsState extends State<MyContacts> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       firebaseList = await ContactHelper().getContacts();
-
-      print(firebaseList);
     });
     _askPermissions(null);
     refreshContacts();
