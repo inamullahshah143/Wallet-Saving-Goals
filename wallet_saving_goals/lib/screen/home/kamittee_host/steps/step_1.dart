@@ -1,47 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_stepper/cool_stepper.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
-import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:multi_select_flutter/multi_select_flutter.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 
-class Members {
-  final String id;
-  final String name;
 
-  Members({
-    this.id,
-    this.name,
-  });
-}
 
-FirebaseAuth _auth;
-get user => _auth.currentUser;
-Future<List<MultiSelectItem<Members>>> getMembers() async {
-  List<Members> members = [];
-  await FirebaseFirestore.instance.collection('user').get().then((value) {
-    for (var item in value.docs) {
-      if (item.id != user.uid) {
-        members.add(
-          Members(
-            id: item.id.toString(),
-            name: item.data()['fullName'],
-          ),
-        );
-      }
-    }
-  });
-  return members
-      .map((member) => MultiSelectItem<Members>(member, member.name))
-      .toList();
-}
-
-CoolStep step1(context, _formKey, kamitteeAmount, kamitteeDuration,
-    kamitteeMembers, startedDate, otherKamitteeAmount, otherKamitteeDuration) {
+CoolStep step1(
+    context,
+    _formKey,
+    kamitteeAmount,
+    kamitteeDuration,
+    startedDate,
+    otherKamitteeAmount,
+    otherKamitteeDuration,) {
   return CoolStep(
     title: 'Choose Kamittee',
     subtitle: 'Please fill some of the basic information to get started',
@@ -231,78 +204,7 @@ CoolStep step1(context, _formKey, kamitteeAmount, kamitteeDuration,
                   : Container();
             },
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Kamittee Members',
-              style: TextStyle(
-                color: AppColor.fonts,
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColor.secondary.withOpacity(0.25),
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 15.0,
-                      top: 15,
-                      bottom: 15,
-                      right: 5,
-                    ),
-                    child: Icon(
-                      FontAwesome.users,
-                      size: 20,
-                      color: AppColor.fonts,
-                    ),
-                  ),
-                  Flexible(
-                    child: Padding(
-                      padding:
-                          const EdgeInsets.only(right: 15.0, top: 5, bottom: 5),
-                      child: FutureBuilder(
-                        future: getMembers(),
-                        builder: (context, snapshot) {
-                          return MultiSelectDialogField(
-                            decoration: BoxDecoration(
-                              border: Border(),
-                            ),
-                            items: snapshot.data,
-                            searchable: true,
-                            title: Text("Memberss"),
-                            selectedColor: AppColor.appThemeColor,
-                            buttonIcon: Icon(
-                              Icons.arrow_drop_down,
-                              color: AppColor.fonts.withOpacity(0.75),
-                            ),
-                            buttonText: Text(
-                              "Select Members",
-                              style: TextStyle(
-                                color: AppColor.fonts,
-                                fontSize: 16,
-                              ),
-                            ),
-                            onConfirm: (results) {
-                              kamitteeMembers = results;
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+         
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
@@ -406,15 +308,6 @@ CoolStep step1(context, _formKey, kamitteeAmount, kamitteeDuration,
       ),
     ),
     validation: () {
-      if (kamitteeDuration.value != 'other') {
-        if (kamitteeMembers.length < int.parse(kamitteeDuration.value)) {
-          return 'you must need ${kamitteeDuration.toString()} members for this kamittee';
-        }
-      } else {
-        if (kamitteeMembers.length < int.parse(otherKamitteeDuration.value)) {
-          return 'you must need ${otherKamitteeDuration.toString()} members for this kamittee';
-        }
-      }
       if (startedDate.text == '') {
         return 'please initiate kamittee starting date';
       }

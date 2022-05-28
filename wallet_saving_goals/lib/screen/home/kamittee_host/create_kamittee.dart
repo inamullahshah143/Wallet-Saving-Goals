@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cool_stepper/cool_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,7 +22,6 @@ class _CreateKamitteeState extends State<CreateKamittee> {
   final kamitteeDuration = '5'.obs;
   final otherKamitteeAmount = '1.0'.obs;
   final otherKamitteeDuration = '1'.obs;
-  final kamitteeMembers = [].obs;
   TextEditingController startedDate = TextEditingController(
       text: '${DateFormat.yMMMEd().format(DateTime.now())}');
   final kamitteePurpose = ''.obs;
@@ -39,13 +37,12 @@ class _CreateKamitteeState extends State<CreateKamittee> {
         _formKey,
         kamitteeAmount,
         kamitteeDuration,
-        kamitteeMembers,
         startedDate,
         otherKamitteeAmount,
         otherKamitteeDuration,
       ),
       step2(),
-      Step3(cnicFront: cnicFront, cnicBack: cnicBack, selfie: selfie).step3(),
+      step3(cnicFront, cnicBack, selfie),
       step4(kamitteePurpose),
     ];
 
