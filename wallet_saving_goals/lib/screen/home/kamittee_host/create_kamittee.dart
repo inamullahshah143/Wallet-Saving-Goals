@@ -1,6 +1,9 @@
 import 'dart:io';
+import 'dart:math';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:cool_stepper/cool_stepper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
@@ -22,6 +25,7 @@ class _CreateKamitteeState extends State<CreateKamittee> {
   final kamitteeDuration = '5'.obs;
   final otherKamitteeAmount = '1.0'.obs;
   final otherKamitteeDuration = '1'.obs;
+  TextEditingController referralCode;
   TextEditingController startedDate = TextEditingController(
       text: '${DateFormat.yMMMEd().format(DateTime.now())}');
   final kamitteePurpose = ''.obs;
@@ -32,15 +36,8 @@ class _CreateKamitteeState extends State<CreateKamittee> {
   @override
   Widget build(BuildContext context) {
     List<CoolStep> steps = [
-      step1(
-        context,
-        _formKey,
-        kamitteeAmount,
-        kamitteeDuration,
-        startedDate,
-        otherKamitteeAmount,
-        otherKamitteeDuration,
-      ),
+      step1(context, _formKey, kamitteeAmount, kamitteeDuration, startedDate,
+          otherKamitteeAmount, otherKamitteeDuration),
       step2(),
       step3(cnicFront, cnicBack, selfie),
       step4(kamitteePurpose),
@@ -52,7 +49,46 @@ class _CreateKamitteeState extends State<CreateKamittee> {
         child: CoolStepper(
           showErrorSnackbar: true,
           onCompleted: () {
-            print('Steps completed!');
+            referralCode = TextEditingController(text: generateRandomString());
+            CoolAlert.show(
+              context: context,
+              backgroundColor: AppColor.fonts,
+              confirmBtnColor: AppColor.appThemeColor,
+              barrierDismissible: true,
+              type: CoolAlertType.custom,
+              widget: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: TextFormField(
+                  controller: referralCode,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    filled: true,
+                    fillColor: AppColor.secondary.withOpacity(0.25),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        copyToClipboard(referralCode.text);
+                      },
+                      icon: Icon(
+                        Icons.copy,
+                      ),
+                    ),
+                    hintText: 'Referral Code',
+                    hintStyle: TextStyle(
+                      color: AppColor.fonts.withOpacity(0.5),
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+              title: 'Kamittee Referral Code',
+              text: 'your referral code is',
+              confirmBtnText: 'Proceed',
+              showCancelBtn: false,
+            );
           },
           steps: steps,
           config: CoolStepperConfig(
@@ -71,5 +107,20 @@ class _CreateKamitteeState extends State<CreateKamittee> {
         ),
       ),
     );
+  }
+
+  Future<void> copyToClipboard(text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Copied to clipboard'),
+    ));
+  }
+
+  String generateRandomString() {
+    var r = Random();
+    const _chars =
+        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    return List.generate(10, (index) => _chars[r.nextInt(_chars.length)])
+        .join();
   }
 }
