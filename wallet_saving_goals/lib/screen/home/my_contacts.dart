@@ -20,16 +20,14 @@ class _MyContactsState extends State<MyContacts> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       firebaseList = await ContactHelper().getContacts();
     });
-    _askPermissions(null);
+    _askPermissions();
     refreshContacts();
   }
 
-  Future<void> _askPermissions(String routeName) async {
+  Future<void> _askPermissions() async {
     PermissionStatus permissionStatus = await _getContactPermission();
     if (permissionStatus == PermissionStatus.granted) {
-      if (routeName != null) {
-        Navigator.of(context).pushNamed(routeName);
-      }
+      
     } else {
       _handleInvalidPermissions(permissionStatus);
     }

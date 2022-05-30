@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/main.dart';
 import 'package:wallet_saving_goals/screen/auth/login_screen.dart';
@@ -21,6 +22,9 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final isVisible = true.obs;
 
+  final String initialCountry = 'PK';
+  final PhoneNumber number = PhoneNumber(isoCode: 'PK');
+  final isValidNo = true.obs;
   final formKey = GlobalKey<FormState>();
   final TextEditingController fullName = TextEditingController();
   final TextEditingController email = TextEditingController();
@@ -125,10 +129,32 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(15.0),
-                      child: TextFormField(
-                        controller: phoneNo,
-                        validator: (value) => Helper.validateMobile(value),
-                        decoration: InputDecoration(
+                      child: InternationalPhoneNumberInput(
+                        onInputChanged: (PhoneNumber number) {},
+                        onInputValidated: (bool value) {
+                          isValidNo.value = value;
+                        },
+                        selectorConfig: const SelectorConfig(
+                          selectorType: PhoneInputSelectorType.DIALOG,
+                        ),
+                        ignoreBlank: false,
+                        autoValidateMode: AutovalidateMode.disabled,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'please enter your phone number';
+                          } else if (isValidNo.value == false) {
+                            return 'please enter valid phone number';
+                          } else {
+                            return null;
+                          }
+                        },
+                        selectorTextStyle: const TextStyle(color: Colors.black),
+                        initialValue: number,
+                        textFieldController: phoneNo,
+                        formatInput: false,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            signed: true, decimal: true),
+                        inputDecoration: InputDecoration(
                           isDense: true,
                           filled: true,
                           fillColor: AppColor.secondary.withOpacity(0.25),

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wallet_saving_goals/screen/components/components.dart';
 
@@ -17,14 +18,8 @@ class AuthenticationHelper {
       );
       return result;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'account-exists-with-different-credential') {
-        Components.showSnackBar(
-            context, 'provided credentials are already in use');
-      } else if (e.code == 'invalid-credential') {
-        Components.showSnackBar(context, 'User Credential dosn\'t exits');
-      }
-    } catch (e) {
-      Components.showSnackBar(context, e);
+      Navigator.of(context).pop();
+      Components.showSnackBar(context, e.message);
     }
   }
 
@@ -32,17 +27,13 @@ class AuthenticationHelper {
   Future signIn({String email, String password, BuildContext context}) async {
     try {
       var result = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
       return result;
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'account-exists-with-different-credential') {
-        Components.showSnackBar(
-            context, 'provided credentials are already in use');
-      } else if (e.code == 'invalid-credential') {
-        Components.showSnackBar(context, 'User Credential dosn\'t exits');
-      }
-    } catch (e) {
-      Components.showSnackBar(context, e);
+      Navigator.of(context).pop();
+      Components.showSnackBar(context, e.message);
     }
   }
 
@@ -64,14 +55,8 @@ class AuthenticationHelper {
             await _auth.signInWithCredential(credential);
         user = userCredential.user;
       } on FirebaseAuthException catch (e) {
-        if (e.code == 'account-exists-with-different-credential') {
-          Components.showSnackBar(
-              context, 'provided credentials are already in use');
-        } else if (e.code == 'invalid-credential') {
-          Components.showSnackBar(context, 'User Credential dosn\'t exits');
-        }
-      } catch (e) {
-        Components.showSnackBar(context, e);
+        Navigator.of(context).pop();
+        Components.showSnackBar(context, e.message);
       }
     }
     return user;
@@ -85,8 +70,19 @@ class AuthenticationHelper {
         await googleSignIn.signOut();
       }
       await FirebaseAuth.instance.signOut();
-    } catch (e) {
-      Components.showSnackBar(context, e);
+    } on FirebaseAuthException catch (e) {
+      Navigator.of(context).pop();
+      Components.showSnackBar(context, e.message);
+    }
+  }
+
+  Future resetPassword(context, String email) async {
+    try {
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      return null;
+    } on FirebaseAuthException catch (e) {
+      Navigator.of(context).pop();
+      Components.showSnackBar(context, e.message);
     }
   }
 }

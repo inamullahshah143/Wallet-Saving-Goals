@@ -5,6 +5,7 @@ import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/main.dart';
+import 'package:wallet_saving_goals/screen/auth/forget_password.dart';
 import 'package:wallet_saving_goals/screen/auth/sign_up_screen.dart';
 import 'package:wallet_saving_goals/screen/components/components.dart';
 import 'package:wallet_saving_goals/screen/drawer_menu.dart';
@@ -76,14 +77,14 @@ class LoginScreen extends StatelessWidget {
                         decoration: InputDecoration(
                           isDense: true,
                           filled: true,
-                          fillColor: Colors.grey.shade200,
+                          fillColor: AppColor.secondary.withOpacity(0.25),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide.none,
                           ),
                           hintText: 'Email Address',
                           hintStyle: TextStyle(
-                            color: Colors.grey.shade600,
+                            color: AppColor.fonts.withOpacity(0.5),
                             fontSize: 14,
                           ),
                         ),
@@ -103,8 +104,9 @@ class LoginScreen extends StatelessWidget {
                               filled: true,
                               fillColor: AppColor.secondary.withOpacity(0.25),
                               border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide.none),
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
                               hintText: 'Password',
                               hintStyle: TextStyle(
                                 color: AppColor.fonts.withOpacity(0.5),
@@ -139,7 +141,9 @@ class LoginScreen extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(ForgetPassword());
+                    },
                     child: Text(
                       'Forgot Password?',
                       style: TextStyle(
