@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 
-CoolStep step4(kamitteePurpose) {
+CoolStep step4(kamitteePurpose, otherKamitteePurpose) {
   return CoolStep(
     title: 'What are you saving for',
     subtitle: 'Select the purpose for savings',
@@ -74,6 +74,9 @@ CoolStep step4(kamitteePurpose) {
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                         keyboardType: TextInputType.text,
+                        onChanged: (value) {
+                          otherKamitteePurpose.value = value;
+                        },
                         decoration: InputDecoration(
                           hintText: 'State Purpose',
                           fillColor: AppColor.secondary.withOpacity(0.25),

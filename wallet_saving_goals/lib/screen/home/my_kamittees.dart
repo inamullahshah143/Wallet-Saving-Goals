@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
-import 'package:wallet_saving_goals/screen/components/kamittee_card.dart';
+import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
 
 class MyKamittees extends StatelessWidget {
   const MyKamittees({Key key}) : super(key: key);
@@ -23,17 +23,23 @@ class MyKamittees extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              physics: BouncingScrollPhysics(),
-              itemCount: 3,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return KamitteeCard(
-                  amount: '100000.0',
-                  duration: '10',
-                  members: '10',
-                  title: 'Education',
-                );
+            child: StreamBuilder(
+              stream: KamitteeHelper().getKamitteeRecords(context),
+              builder: (context, snapshot) {
+                return snapshot.connectionState == ConnectionState.waiting
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : snapshot.hasData
+                        ? snapshot.data
+                        : Center(
+                            child: Text(
+                              'No Record Found',
+                              style: TextStyle(
+                                color: AppColor.secondary,
+                              ),
+                            ),
+                          );
               },
             ),
           ),

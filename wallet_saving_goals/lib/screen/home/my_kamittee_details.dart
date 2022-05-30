@@ -1,11 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cool_alert/cool_alert.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 
 class MyKamitteeDetails extends StatelessWidget {
-  const MyKamitteeDetails({Key key}) : super(key: key);
+  final Map<String, dynamic> kamitteeDetails;
+  const MyKamitteeDetails({Key key, @required this.kamitteeDetails})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -60,9 +65,9 @@ class MyKamitteeDetails extends StatelessWidget {
                         color: AppColor.white,
                       ),
                       Text(
-                        '10',
+                        '${kamitteeDetails['members_total']}/${kamitteeDetails['members_needed']}',
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: AppColor.white,
                         ),
@@ -92,9 +97,13 @@ class MyKamitteeDetails extends StatelessWidget {
                           color: AppColor.white,
                         ),
                         Text(
-                          '1 lac',
+                          NumberFormat.compactCurrency(
+                                  symbol: '', decimalDigits: 3)
+                              .format(double.tryParse(
+                                  kamitteeDetails['kamittee_amount']))
+                              .toString(),
                           style: TextStyle(
-                            fontSize: 30,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: AppColor.white,
                           ),
@@ -125,9 +134,9 @@ class MyKamitteeDetails extends StatelessWidget {
                         color: AppColor.white,
                       ),
                       Text(
-                        '10',
+                        kamitteeDetails['kamittee_duration'],
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: AppColor.white,
                         ),
@@ -142,6 +151,53 @@ class MyKamitteeDetails extends StatelessWidget {
                   ),
                 )
               ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Text(
+              'Referral Code',
+              style: TextStyle(
+                color: AppColor.fonts,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            child: Center(
+              child: RichText(
+                text: TextSpan(
+                  style: TextStyle(
+                    color: AppColor.fonts,
+                  ),
+                  children: [
+                    TextSpan(
+                      text: kamitteeDetails['referral_code'],
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                    TextSpan(
+                      text: '   ',
+                    ),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: IconButton(
+                        onPressed: () {
+                          copyToClipboard(
+                              context, kamitteeDetails['referral_code']);
+                        },
+                        icon: Icon(
+                          Icons.copy,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
           Padding(
@@ -176,7 +232,8 @@ class MyKamitteeDetails extends StatelessWidget {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: '10000.00',
+                        text:
+                            '${(double.tryParse(kamitteeDetails['kamittee_amount']) / double.tryParse(kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
                       ),
                       TextSpan(
                         text: ' PKR',
@@ -200,7 +257,7 @@ class MyKamitteeDetails extends StatelessWidget {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: 'May 10, 2022',
+                        text: kamitteeDetails['starting_date'],
                       ),
                     ],
                   ),
@@ -222,7 +279,7 @@ class MyKamitteeDetails extends StatelessWidget {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: 'March 10, 2023',
+                        text: '',
                       ),
                     ],
                   ),
@@ -244,7 +301,7 @@ class MyKamitteeDetails extends StatelessWidget {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: '3rd',
+                        text: 'N/A',
                       ),
                     ],
                   ),
@@ -266,7 +323,7 @@ class MyKamitteeDetails extends StatelessWidget {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: '2nd',
+                        text: 'N/A',
                       ),
                     ],
                   ),
@@ -288,7 +345,7 @@ class MyKamitteeDetails extends StatelessWidget {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: '8',
+                        text: 'N/A',
                       ),
                     ],
                   ),
@@ -307,31 +364,50 @@ class MyKamitteeDetails extends StatelessWidget {
               ),
             ),
           ),
-          ListTile(
-            title: Text('Host Name'),
-            subtitle: Text('email@email.com'),
-            trailing: RichText(
-              text: TextSpan(
-                children: [
-                  WidgetSpan(
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.call,
-                      ),
-                    ),
-                  ),
-                  WidgetSpan(
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        FontAwesome.chat_empty,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('user')
+                .doc(kamitteeDetails['host_id'])
+                .snapshots(),
+            builder: (context, snapshot) {
+              return snapshot.connectionState == ConnectionState.waiting
+                  ? Container()
+                  : snapshot.hasData
+                      ? ListTile(
+                          title: Text(snapshot.data['fullName'].toString()),
+                          subtitle: Text(snapshot.data['email'].toString()),
+                          trailing: RichText(
+                            text: TextSpan(
+                              children: [
+                                WidgetSpan(
+                                  child: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.call,
+                                    ),
+                                  ),
+                                ),
+                                WidgetSpan(
+                                  child: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      FontAwesome.chat_empty,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Text(
+                            'No Record Found',
+                            style: TextStyle(
+                              color: AppColor.secondary,
+                            ),
+                          ),
+                        );
+            },
           ),
           Padding(
             padding: const EdgeInsets.all(15.0),
@@ -434,5 +510,12 @@ class MyKamitteeDetails extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<void> copyToClipboard(context, text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Copied to clipboard'),
+    ));
   }
 }

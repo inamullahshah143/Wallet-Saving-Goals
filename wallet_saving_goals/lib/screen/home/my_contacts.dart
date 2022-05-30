@@ -79,7 +79,7 @@ class _MyContactsState extends State<MyContacts> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: contactList != null
+        child: contactList.isNotEmpty
             ? ListView.builder(
                 physics: BouncingScrollPhysics(),
                 itemCount: contactList?.length ?? 0,
