@@ -71,14 +71,20 @@ class KamitteeHelper extends GetxController {
         }
       },
     );
-    yield ListView.builder(
-      physics: BouncingScrollPhysics(),
-      itemCount: x.length,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return x[index];
-      },
-    );
+    yield x.length > 0
+        ? ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: x.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return x[index];
+            },
+          )
+        : Expanded(
+            child: Center(
+              child: Text('No Kamittee Found'),
+            ),
+          );
   }
 
   Stream<Widget> getAllKamitteeRecords(context) async* {
@@ -98,14 +104,20 @@ class KamitteeHelper extends GetxController {
         }
       },
     );
-    yield ListView.builder(
-      physics: BouncingScrollPhysics(),
-      itemCount: x.length,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return x[index];
-      },
-    );
+    yield x.length > 0
+        ? ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: x.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return x[index];
+            },
+          )
+        : Expanded(
+            child: Center(
+              child: Text('No Kamittee Found'),
+            ),
+          );
   }
 
   Stream<Widget> getKamitteeMembers(context, kamitteeId) async* {
@@ -155,13 +167,19 @@ class KamitteeHelper extends GetxController {
         }
       },
     );
-    yield ListView.builder(
-      physics: BouncingScrollPhysics(),
-      itemCount: x.length,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        return x[index];
-      },
-    );
+    yield x.length > 0
+        ? ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: x.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return x[index];
+            },
+          )
+        : Expanded(
+            child: Center(
+              child: Text('No Kamittee Found'),
+            ),
+          );
   }
 }

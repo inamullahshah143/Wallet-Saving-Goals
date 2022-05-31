@@ -14,6 +14,7 @@ CoolStep step1(
   otherKamitteeAmount,
   otherKamitteeDuration,
 ) {
+  selectedDate.value = '${DateTime.now()}';
   TextEditingController startedDate = TextEditingController(
       text: '${DateFormat.yMMMEd().format(DateTime.now())}');
   return CoolStep(

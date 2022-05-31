@@ -17,7 +17,7 @@ class HostDashboard extends StatelessWidget {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: 'Welcome to\n',
+                    text: 'Wellcome to\n',
                     style: TextStyle(
                       color: AppColor.primary.withOpacity(0.5),
                       fontSize: 24,
