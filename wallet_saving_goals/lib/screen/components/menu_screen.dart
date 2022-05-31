@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/main.dart';
-import 'package:wallet_saving_goals/screen/auth/login_screen.dart';
 import 'package:wallet_saving_goals/screen/auth/splash_screen.dart';
+import 'package:wallet_saving_goals/screen/components/components.dart';
 import 'package:wallet_saving_goals/utils/auth_helper.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -145,10 +147,14 @@ class MenuScreen extends StatelessWidget {
                     barrierDismissible: false,
                     type: CoolAlertType.confirm,
                     text: 'you want to Logout?',
-                    onConfirmBtnTap: () {
-                      AuthenticationHelper().signOut().whenComplete(() {
-                        prefs.clear();
-                        Get.off(LoginScreen());
+                    onConfirmBtnTap: () async {
+                      Components.showAlertDialog(context);
+                      await AuthenticationHelper().signOut().whenComplete(() {
+                        Timer(const Duration(seconds: 3), () {
+                          Navigator.of(context).pop();
+                          prefs.clear();
+                          Get.off(SplashScreen());
+                        });
                       });
                     },
                     confirmBtnText: 'Logout',

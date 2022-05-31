@@ -6,7 +6,6 @@ import 'package:cool_stepper/cool_stepper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/main.dart';
 import 'package:wallet_saving_goals/screen/components/components.dart';
@@ -30,10 +29,9 @@ class _CreateKamitteeState extends State<CreateKamittee> {
   final otherKamitteeDuration = '1'.obs;
   final KamitteeHelper controller = Get.put(KamitteeHelper());
   TextEditingController referralCode;
-  TextEditingController startedDate = TextEditingController(
-      text: '${DateFormat.yMMMEd().format(DateTime.now())}');
   final kamitteePurpose = ''.obs;
   final otherKamitteePurpose = ''.obs;
+  final selectedDate = ''.obs;
   File cnicFront;
   File cnicBack;
   File selfie;
@@ -41,7 +39,7 @@ class _CreateKamitteeState extends State<CreateKamittee> {
   @override
   Widget build(BuildContext context) {
     List<CoolStep> steps = [
-      step1(context, _formKey, kamitteeAmount, kamitteeDuration, startedDate,
+      step1(context, _formKey, kamitteeAmount, kamitteeDuration, selectedDate,
           otherKamitteeAmount, otherKamitteeDuration),
       step2(),
       step3(),
@@ -120,7 +118,7 @@ class _CreateKamitteeState extends State<CreateKamittee> {
                         'kamittee_duration': kamitteeDuration.value == 'other'
                             ? otherKamitteeDuration.value
                             : kamitteeDuration.value,
-                        'starting_date': startedDate.text.toString(),
+                        'starting_date': selectedDate.value,
                         'host_cnic_front': cnicFrontURL,
                         'host_cnic_back': cnicBackURL,
                         'host_selfie': selfieURL,

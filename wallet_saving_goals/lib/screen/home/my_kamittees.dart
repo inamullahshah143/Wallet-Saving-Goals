@@ -34,7 +34,7 @@ class MyKamittees extends StatelessWidget {
                         ? snapshot.data
                         : Center(
                             child: Text(
-                              'No Record Found',
+                              'No Kamittee Found',
                               style: TextStyle(
                                 color: AppColor.secondary,
                               ),

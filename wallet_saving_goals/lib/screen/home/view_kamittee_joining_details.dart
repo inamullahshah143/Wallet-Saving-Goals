@@ -1,12 +1,26 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/main.dart';
+import 'package:wallet_saving_goals/screen/components/components.dart';
+import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
 
 class ViewKamitteeDetails extends StatelessWidget {
-  const ViewKamitteeDetails({Key key}) : super(key: key);
+  final Map<String, dynamic> kamitteeDetails;
+  final String kamitteeId;
+  ViewKamitteeDetails({
+    Key key,
+    @required this.kamitteeDetails,
+    @required this.kamitteeId,
+  }) : super(key: key);
 
+  final referralCode = ''.obs;
+  final memberList = [].obs;
+  final memberCount = ''.obs;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +38,7 @@ class ViewKamitteeDetails extends StatelessWidget {
           ),
         ),
         title: Text(
-          'Kamittee Details',
+          'My Kamittee Details',
           style: TextStyle(
             fontSize: 18,
             color: AppColor.fonts,
@@ -60,9 +74,9 @@ class ViewKamitteeDetails extends StatelessWidget {
                         color: AppColor.white,
                       ),
                       Text(
-                        '4/10',
+                        '${kamitteeDetails['members_total']}/${kamitteeDetails['members_needed']}',
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: AppColor.white,
                         ),
@@ -92,9 +106,13 @@ class ViewKamitteeDetails extends StatelessWidget {
                           color: AppColor.white,
                         ),
                         Text(
-                          '1 lac',
+                          NumberFormat.compactCurrency(
+                                  symbol: '', decimalDigits: 2)
+                              .format(double.tryParse(
+                                  kamitteeDetails['kamittee_amount']))
+                              .toString(),
                           style: TextStyle(
-                            fontSize: 30,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: AppColor.white,
                           ),
@@ -125,9 +143,9 @@ class ViewKamitteeDetails extends StatelessWidget {
                         color: AppColor.white,
                       ),
                       Text(
-                        '10',
+                        kamitteeDetails['kamittee_duration'],
                         style: TextStyle(
-                          fontSize: 30,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: AppColor.white,
                         ),
@@ -176,7 +194,8 @@ class ViewKamitteeDetails extends StatelessWidget {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: '10000.00',
+                        text:
+                            '${(double.tryParse(kamitteeDetails['kamittee_amount']) / double.tryParse(kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
                       ),
                       TextSpan(
                         text: ' PKR',
@@ -200,7 +219,8 @@ class ViewKamitteeDetails extends StatelessWidget {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: 'May 10, 2022',
+                        text: DateFormat.yMMMEd().format(
+                            DateTime.parse(kamitteeDetails['starting_date'])),
                       ),
                     ],
                   ),
@@ -222,7 +242,16 @@ class ViewKamitteeDetails extends StatelessWidget {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: 'March 10, 2023',
+                        text: DateFormat.yMMMEd().format(
+                          DateTime.parse(kamitteeDetails['starting_date']).add(
+                            Duration(
+                              days: 30 *
+                                  int.tryParse(
+                                    kamitteeDetails['kamittee_duration'],
+                                  ),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -241,31 +270,50 @@ class ViewKamitteeDetails extends StatelessWidget {
               ),
             ),
           ),
-          ListTile(
-            title: Text('Host Name'),
-            subtitle: Text('email@email.com'),
-            trailing: RichText(
-              text: TextSpan(
-                children: [
-                  WidgetSpan(
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        Icons.call,
-                      ),
-                    ),
-                  ),
-                  WidgetSpan(
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: Icon(
-                        FontAwesome.chat_empty,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('user')
+                .doc(kamitteeDetails['host_id'])
+                .snapshots(),
+            builder: (context, snapshot) {
+              return snapshot.connectionState == ConnectionState.waiting
+                  ? Container()
+                  : snapshot.hasData
+                      ? ListTile(
+                          title: Text(snapshot.data['fullName'].toString()),
+                          subtitle: Text(snapshot.data['email'].toString()),
+                          trailing: RichText(
+                            text: TextSpan(
+                              children: [
+                                WidgetSpan(
+                                  child: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      Icons.call,
+                                    ),
+                                  ),
+                                ),
+                                WidgetSpan(
+                                  child: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(
+                                      FontAwesome.chat_empty,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Text(
+                            'No Record Found',
+                            style: TextStyle(
+                              color: AppColor.secondary,
+                            ),
+                          ),
+                        );
+            },
           ),
           Padding(
             padding: const EdgeInsets.all(15.0),
@@ -278,94 +326,115 @@ class ViewKamitteeDetails extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              physics: BouncingScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  dense: true,
-                  title: Text('Member Name'),
-                  subtitle: Text('email@email.com'),
-                  trailing: RichText(
-                    text: TextSpan(
-                      children: [
-                        WidgetSpan(
-                          child: IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.call,
+          StreamBuilder(
+            stream: KamitteeHelper().getKamitteeMembers(context, kamitteeId),
+            builder: (context, snapshot) {
+              return snapshot.connectionState == ConnectionState.waiting
+                  ? Container()
+                  : snapshot.hasData
+                      ? snapshot.data
+                      : Center(
+                          child: Text(
+                            'No Members Found',
+                            style: TextStyle(
+                              color: AppColor.secondary,
                             ),
                           ),
-                        ),
-                        WidgetSpan(
-                          child: IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              FontAwesome.chat_empty,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                        );
+            },
           ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: ElevatedButton(
-              onPressed: () {
-                CoolAlert.show(
-                  context: context,
-                  confirmBtnColor: AppColor.appThemeColor,
-                  barrierDismissible: false,
-                  type: CoolAlertType.custom,
-                  text: 'Please enter your invite code',
-                  onConfirmBtnTap: () {},
-                  confirmBtnText: 'Join',
-                  backgroundColor: AppColor.fonts,
-                  widget: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      onChanged: (value) {},
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        hintText: 'Code.',
-                        fillColor: AppColor.secondary.withOpacity(0.25),
-                        isDense: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
+        ],
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: ElevatedButton(
+          onPressed: kamitteeDetails['host_id'] == user.uid
+              ? () {}
+              : () {
+                  CoolAlert.show(
+                    context: context,
+                    confirmBtnColor: AppColor.appThemeColor,
+                    barrierDismissible: false,
+                    type: CoolAlertType.custom,
+                    text: 'Please enter your invite code',
+                    onConfirmBtnTap: () async {
+                      Components.showAlertDialog(context);
+                      await FirebaseFirestore.instance
+                          .collection('kamittee')
+                          .doc(kamitteeId)
+                          .get()
+                          .then((value) async {
+                        if (value.data()['referral_code'] ==
+                            referralCode.value) {
+                          memberList.value = value.data()['members_list'];
+                          memberList.add(user.uid);
+                          memberCount.value =
+                              (int.parse(value.data()['members_total']) + 1)
+                                  .toString();
+                          await FirebaseFirestore.instance
+                              .collection('kamittee')
+                              .doc(kamitteeId)
+                              .update({
+                            'members_list': memberList,
+                            'members_total': memberCount.value
+                          }).whenComplete(() {
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                            Components.showSnackBar(
+                                context, 'Joined Kamittee Successfully');
+                          });
+                        } else {
+                          Navigator.of(context).pop();
+                          Navigator.of(context).pop();
+                          Components.showSnackBar(
+                              context, 'Invalid referral code');
+                        }
+                      });
+                    },
+                    confirmBtnText: 'Join',
+                    backgroundColor: AppColor.fonts,
+                    widget: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextFormField(
+                        onChanged: (value) {
+                          referralCode.value = value;
+                        },
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(
+                          hintText: 'Code.',
+                          fillColor: AppColor.secondary.withOpacity(0.25),
+                          isDense: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none,
+                          ),
+                          filled: true,
                         ),
-                        filled: true,
                       ),
                     ),
-                  ),
-                  showCancelBtn: true,
-                );
-              },
-              child: Text('Join as Member'),
-              style: ButtonStyle(
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(AppColor.white),
-                overlayColor: MaterialStateProperty.all<Color>(
-                  AppColor.white.withOpacity(0.1),
-                ),
-                minimumSize: MaterialStateProperty.all(
-                  Size(MediaQuery.of(context).size.width, 45),
-                ),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                    showCancelBtn: true,
+                  );
+                },
+          child: Text('Join as Member'),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(
+                kamitteeDetails['host_id'] == user.uid
+                    ? AppColor.secondary
+                    : AppColor.appThemeColor),
+            foregroundColor: MaterialStateProperty.all<Color>(AppColor.white),
+            overlayColor: MaterialStateProperty.all<Color>(
+              AppColor.white.withOpacity(0.1),
+            ),
+            minimumSize: MaterialStateProperty.all(
+              Size(MediaQuery.of(context).size.width, 45),
+            ),
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

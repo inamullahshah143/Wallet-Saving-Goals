@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
-import 'package:wallet_saving_goals/screen/components/invitation_card.dart';
+import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
 
 class HolderDashboard extends StatelessWidget {
-  const HolderDashboard({Key key}) : super(key: key);
+  HolderDashboard({Key key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,7 +16,7 @@ class HolderDashboard extends StatelessWidget {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: 'Welcome to\n',
+                    text: 'Wellcome to\n',
                     style: TextStyle(
                       color: AppColor.primary.withOpacity(0.5),
                       fontSize: 24,
@@ -57,17 +57,23 @@ class HolderDashboard extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              physics: BouncingScrollPhysics(),
-              itemCount: 1,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                return InvitationCard(
-                  amount: '100000.0',
-                  duration: '10',
-                  members: '10',
-                  title: 'Education',
-                );
+            child: StreamBuilder(
+              stream: KamitteeHelper().getAllKamitteeRecords(context),
+              builder: (context, snapshot) {
+                return snapshot.connectionState == ConnectionState.waiting
+                    ? Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : snapshot.hasData
+                        ? snapshot.data
+                        : Center(
+                            child: Text(
+                              'No Kamittee Found',
+                              style: TextStyle(
+                                color: AppColor.secondary,
+                              ),
+                            ),
+                          );
               },
             ),
           ),

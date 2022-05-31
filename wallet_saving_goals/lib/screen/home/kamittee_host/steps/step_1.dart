@@ -5,16 +5,17 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 
-
-
 CoolStep step1(
-    context,
-    _formKey,
-    kamitteeAmount,
-    kamitteeDuration,
-    startedDate,
-    otherKamitteeAmount,
-    otherKamitteeDuration,) {
+  context,
+  _formKey,
+  kamitteeAmount,
+  kamitteeDuration,
+  selectedDate,
+  otherKamitteeAmount,
+  otherKamitteeDuration,
+) {
+  TextEditingController startedDate = TextEditingController(
+      text: '${DateFormat.yMMMEd().format(DateTime.now())}');
   return CoolStep(
     title: 'Choose Kamittee',
     subtitle: 'Please fill some of the basic information to get started',
@@ -204,7 +205,6 @@ CoolStep step1(
                   : Container();
             },
           ),
-         
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
@@ -234,9 +234,10 @@ CoolStep step1(
                     ),
                     builder: (context, picker) {
                       return picker;
-                    }).then((selectedDate) {
-                  if (selectedDate != null) {
-                    startedDate.text = DateFormat.yMMMEd().format(selectedDate);
+                    }).then((date) {
+                  if (date != null) {
+                    startedDate.text = DateFormat.yMMMEd().format(date);
+                    selectedDate.value = date.toString();
                   }
                 });
               },

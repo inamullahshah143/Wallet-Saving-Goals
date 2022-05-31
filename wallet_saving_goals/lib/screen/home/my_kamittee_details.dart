@@ -6,11 +6,16 @@ import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
 
 class MyKamitteeDetails extends StatelessWidget {
   final Map<String, dynamic> kamitteeDetails;
-  const MyKamitteeDetails({Key key, @required this.kamitteeDetails})
-      : super(key: key);
+  final String kamitteeId;
+  MyKamitteeDetails({
+    Key key,
+    @required this.kamitteeDetails,
+    @required this.kamitteeId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +103,7 @@ class MyKamitteeDetails extends StatelessWidget {
                         ),
                         Text(
                           NumberFormat.compactCurrency(
-                                  symbol: '', decimalDigits: 3)
+                                  symbol: '', decimalDigits: 2)
                               .format(double.tryParse(
                                   kamitteeDetails['kamittee_amount']))
                               .toString(),
@@ -257,7 +262,8 @@ class MyKamitteeDetails extends StatelessWidget {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: kamitteeDetails['starting_date'],
+                        text: DateFormat.yMMMEd().format(
+                            DateTime.parse(kamitteeDetails['starting_date'])),
                       ),
                     ],
                   ),
@@ -279,7 +285,16 @@ class MyKamitteeDetails extends StatelessWidget {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: '',
+                        text: DateFormat.yMMMEd().format(
+                          DateTime.parse(kamitteeDetails['starting_date']).add(
+                            Duration(
+                              days: 30 *
+                                  int.tryParse(
+                                    kamitteeDetails['kamittee_duration'],
+                                  ),
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -420,94 +435,74 @@ class MyKamitteeDetails extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              physics: BouncingScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: 3,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  dense: true,
-                  title: Text('Member Name'),
-                  subtitle: Text('email@email.com'),
-                  trailing: RichText(
-                    text: TextSpan(
-                      children: [
-                        WidgetSpan(
-                          child: IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.call,
+          StreamBuilder(
+            stream: KamitteeHelper().getKamitteeMembers(context, kamitteeId),
+            builder: (context, snapshot) {
+              return snapshot.connectionState == ConnectionState.waiting
+                  ? Container()
+                  : snapshot.hasData
+                      ? snapshot.data
+                      : Center(
+                          child: Text(
+                            'No Record Found',
+                            style: TextStyle(
+                              color: AppColor.secondary,
                             ),
                           ),
-                        ),
-                        WidgetSpan(
-                          child: IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              FontAwesome.chat_empty,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                        );
+            },
           ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: ElevatedButton(
-              onPressed: () {
-                CoolAlert.show(
-                  context: context,
-                  confirmBtnColor: AppColor.appThemeColor,
-                  barrierDismissible: false,
-                  type: CoolAlertType.custom,
-                  text: 'Please enter your invite code',
-                  onConfirmBtnTap: () {},
-                  confirmBtnText: 'Join',
-                  backgroundColor: AppColor.fonts,
-                  widget: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextFormField(
-                      onChanged: (value) {},
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        hintText: 'Code.',
-                        fillColor: AppColor.secondary.withOpacity(0.25),
-                        isDense: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                      ),
+        ],
+      ),
+      bottomNavigationBar: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: ElevatedButton(
+          onPressed: () {
+            CoolAlert.show(
+              context: context,
+              confirmBtnColor: AppColor.appThemeColor,
+              barrierDismissible: false,
+              type: CoolAlertType.custom,
+              text: 'Please enter your invite code',
+              onConfirmBtnTap: () {},
+              confirmBtnText: 'Join',
+              backgroundColor: AppColor.fonts,
+              widget: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  onChanged: (value) {},
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    hintText: 'Code.',
+                    fillColor: AppColor.secondary.withOpacity(0.25),
+                    isDense: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
                     ),
-                  ),
-                  showCancelBtn: true,
-                );
-              },
-              child: Text('Proceed to Pay'),
-              style: ButtonStyle(
-                foregroundColor:
-                    MaterialStateProperty.all<Color>(AppColor.white),
-                overlayColor: MaterialStateProperty.all<Color>(
-                  AppColor.white.withOpacity(0.1),
-                ),
-                minimumSize: MaterialStateProperty.all(
-                  Size(MediaQuery.of(context).size.width, 45),
-                ),
-                shape: MaterialStateProperty.all(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    filled: true,
                   ),
                 ),
               ),
+              showCancelBtn: true,
+            );
+          },
+          child: Text('Proceed'),
+          style: ButtonStyle(
+            foregroundColor: MaterialStateProperty.all<Color>(AppColor.white),
+            overlayColor: MaterialStateProperty.all<Color>(
+              AppColor.white.withOpacity(0.1),
+            ),
+            minimumSize: MaterialStateProperty.all(
+              Size(MediaQuery.of(context).size.width, 45),
+            ),
+            shape: MaterialStateProperty.all(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

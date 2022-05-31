@@ -11,6 +11,7 @@ class KamitteeCard extends StatelessWidget {
   final String duration;
   final String amount;
   final Map<String, dynamic> kamitteeDetails;
+  final String kamitteeId;
   const KamitteeCard({
     Key key,
     @required this.title,
@@ -18,6 +19,7 @@ class KamitteeCard extends StatelessWidget {
     @required this.duration,
     @required this.amount,
     @required this.kamitteeDetails,
+    @required this.kamitteeId,
   }) : super(key: key);
 
   @override
@@ -103,7 +105,10 @@ class KamitteeCard extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    Get.to(MyKamitteeDetails(kamitteeDetails: kamitteeDetails));
+                    Get.to(MyKamitteeDetails(
+                      kamitteeDetails: kamitteeDetails,
+                      kamitteeId: kamitteeId,
+                    ));
                   },
                   child: Text('View Details'),
                 ),

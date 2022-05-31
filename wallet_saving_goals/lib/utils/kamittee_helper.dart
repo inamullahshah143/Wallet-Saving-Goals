@@ -4,11 +4,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:wallet_saving_goals/main.dart';
+import 'package:wallet_saving_goals/screen/components/invitation_card.dart';
 import 'package:wallet_saving_goals/screen/components/kamittee_card.dart';
 
 class KamitteeHelper extends GetxController {
@@ -64,7 +66,92 @@ class KamitteeHelper extends GetxController {
                 '${item.data()['members_total']}/${item.data()['members_needed']}',
             title: item.data()['kamittee_purpose'],
             kamitteeDetails: item.data(),
+            kamitteeId: item.id,
           ));
+        }
+      },
+    );
+    yield ListView.builder(
+      physics: BouncingScrollPhysics(),
+      itemCount: x.length,
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        return x[index];
+      },
+    );
+  }
+
+  Stream<Widget> getAllKamitteeRecords(context) async* {
+    List<Widget> x = [];
+    await FirebaseFirestore.instance.collection('kamittee').get().then(
+      (value) {
+        for (var item in value.docs) {
+          x.add(InvitationCard(
+            amount: item.data()['kamittee_amount'],
+            duration: item.data()['kamittee_duration'],
+            members:
+                '${item.data()['members_total']}/${item.data()['members_needed']}',
+            title: item.data()['kamittee_purpose'],
+            kamitteeDetails: item.data(),
+            kamitteeId: item.id,
+          ));
+        }
+      },
+    );
+    yield ListView.builder(
+      physics: BouncingScrollPhysics(),
+      itemCount: x.length,
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        return x[index];
+      },
+    );
+  }
+
+  Stream<Widget> getKamitteeMembers(context, kamitteeId) async* {
+    List<Widget> x = [];
+    await FirebaseFirestore.instance
+        .collection('kamittee')
+        .doc(kamitteeId)
+        .get()
+        .then(
+      (value) async {
+        for (var item in value.data()['members_list']) {
+          await FirebaseFirestore.instance
+              .collection('user')
+              .doc(item)
+              .get()
+              .then((userData) {
+            x.add(
+              ListTile(
+                dense: true,
+                title: Text(userData.data()['fullName']),
+                subtitle: Text(userData.data()['email']),
+                trailing: RichText(
+                  text: TextSpan(
+                    children: [
+                      WidgetSpan(
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            Icons.call,
+                          ),
+                        ),
+                      ),
+                      WidgetSpan(
+                        child: IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            FontAwesome.chat_empty,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          });
         }
       },
     );
