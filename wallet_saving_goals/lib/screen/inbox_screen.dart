@@ -69,6 +69,8 @@ class InboxScreen extends StatelessWidget {
                 ),
               );
             },
+            leading: CircleAvatar(
+                        child: Text(item.data()['username'][0])),
             title: Text(item.data()['username']),
             subtitle: Text(item.data()['email']),
             trailing: IconButton(

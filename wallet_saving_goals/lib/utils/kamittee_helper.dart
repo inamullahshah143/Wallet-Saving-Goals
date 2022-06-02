@@ -55,7 +55,8 @@ class KamitteeHelper extends GetxController {
     List<Widget> x = [];
     await FirebaseFirestore.instance
         .collection('kamittee')
-        .where('host_id', isEqualTo: user.uid)
+        .where('members_list', arrayContains: user.uid)
+        .where('status', isEqualTo: 1)
         .get()
         .then(
       (value) {

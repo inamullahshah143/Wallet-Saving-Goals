@@ -2,6 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_chat_bubble/bubble_type.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_chat_bubble/clippers/chat_bubble_clipper_5.dart';
@@ -19,35 +20,45 @@ class GetMessages extends StatelessWidget {
     String type,
     String messageId,
   ) =>
-      ChatBubble(
-        clipper: ChatBubbleClipper5(type: BubbleType.sendBubble),
-        alignment: Alignment.topRight,
-        margin: EdgeInsets.only(top: 10),
-        backGroundColor: AppColor.appThemeColor,
-        child: Container(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.7,
-          ),
-          child: Text(
-            message,
-            style: TextStyle(color: Colors.white),
+      GestureDetector(
+        onLongPress: () {
+          copyToClipboard(context, message);
+        },
+        child: ChatBubble(
+          clipper: ChatBubbleClipper5(type: BubbleType.sendBubble),
+          alignment: Alignment.topRight,
+          margin: EdgeInsets.only(top: 10),
+          backGroundColor: AppColor.appThemeColor,
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.7,
+            ),
+            child: Text(
+              message,
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ),
       );
 
   getReceiverView(BuildContext context, String message, String type) =>
-      ChatBubble(
-        clipper: ChatBubbleClipper5(type: BubbleType.receiverBubble),
-        alignment: Alignment.topLeft,
-        margin: EdgeInsets.only(top: 10),
-        backGroundColor: AppColor.secondary,
-        child: Container(
-          constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.7,
-          ),
-          child: Text(
-            message,
-            style: TextStyle(color: Colors.white),
+      GestureDetector(
+        onLongPress: () {
+          copyToClipboard(context, message);
+        },
+        child: ChatBubble(
+          clipper: ChatBubbleClipper5(type: BubbleType.receiverBubble),
+          alignment: Alignment.topLeft,
+          margin: EdgeInsets.only(top: 10),
+          backGroundColor: AppColor.fonts,
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.7,
+            ),
+            child: Text(
+              message,
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ),
       );
@@ -92,5 +103,12 @@ class GetMessages extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> copyToClipboard(context, text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Copied to clipboard'),
+    ));
   }
 }

@@ -354,84 +354,93 @@ class ViewKamitteeDetails extends StatelessWidget {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(15.0),
         child: ElevatedButton(
-          onPressed: kamitteeDetails['host_id'] == user.uid
+          onPressed: int.parse(kamitteeDetails['members_needed']) <
+                  int.parse(kamitteeDetails['members_total'])
               ? () {}
-              : kamitteeDetails['members_list'].contains(user.uid)
+              : kamitteeDetails['host_id'] == user.uid
                   ? () {}
-                  : () {
-                      CoolAlert.show(
-                        context: context,
-                        confirmBtnColor: AppColor.appThemeColor,
-                        barrierDismissible: false,
-                        type: CoolAlertType.custom,
-                        text: 'Please enter your invite code',
-                        onConfirmBtnTap: () async {
-                          Components.showAlertDialog(context);
-                          await FirebaseFirestore.instance
-                              .collection('kamittee')
-                              .doc(kamitteeId)
-                              .get()
-                              .then((value) async {
-                            if (value.data()['referral_code'] ==
-                                referralCode.value) {
-                              memberList.value = value.data()['members_list'];
-                              memberList.add(user.uid);
-                              memberCount.value =
-                                  (int.parse(value.data()['members_total']) + 1)
-                                      .toString();
+                  : kamitteeDetails['members_list'].contains(user.uid)
+                      ? () {}
+                      : () {
+                          CoolAlert.show(
+                            context: context,
+                            confirmBtnColor: AppColor.appThemeColor,
+                            barrierDismissible: false,
+                            type: CoolAlertType.custom,
+                            text: 'Please enter your invite code',
+                            onConfirmBtnTap: () async {
+                              Components.showAlertDialog(context);
                               await FirebaseFirestore.instance
                                   .collection('kamittee')
                                   .doc(kamitteeId)
-                                  .update({
-                                'members_list': memberList,
-                                'members_total': memberCount.value
-                              }).whenComplete(() {
-                                Navigator.of(context).pop();
-                                Navigator.of(context).pop();
-                                Navigator.of(context).pop();
-                                Components.showSnackBar(
-                                    context, 'Joined Kamittee Successfully');
+                                  .get()
+                                  .then((value) async {
+                                if (value.data()['referral_code'] ==
+                                    referralCode.value) {
+                                  memberList.value =
+                                      value.data()['members_list'];
+                                  memberList.add(user.uid);
+                                  memberCount.value = (int.parse(
+                                              value.data()['members_total']) +
+                                          1)
+                                      .toString();
+                                  await FirebaseFirestore.instance
+                                      .collection('kamittee')
+                                      .doc(kamitteeId)
+                                      .update({
+                                    'members_list': memberList,
+                                    'members_total': memberCount.value
+                                  }).whenComplete(() {
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                    Components.showSnackBar(context,
+                                        'Joined Kamittee Successfully');
+                                  });
+                                } else {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
+                                  Components.showSnackBar(
+                                      context, 'Invalid referral code');
+                                }
                               });
-                            } else {
-                              Navigator.of(context).pop();
-                              Navigator.of(context).pop();
-                              Components.showSnackBar(
-                                  context, 'Invalid referral code');
-                            }
-                          });
-                        },
-                        confirmBtnText: 'Join',
-                        backgroundColor: AppColor.fonts,
-                        widget: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            onChanged: (value) {
-                              referralCode.value = value;
                             },
-                            keyboardType: TextInputType.text,
-                            decoration: InputDecoration(
-                              hintText: 'Code.',
-                              fillColor: AppColor.secondary.withOpacity(0.25),
-                              isDense: true,
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide.none,
+                            confirmBtnText: 'Join',
+                            backgroundColor: AppColor.fonts,
+                            widget: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: TextFormField(
+                                onChanged: (value) {
+                                  referralCode.value = value;
+                                },
+                                keyboardType: TextInputType.text,
+                                decoration: InputDecoration(
+                                  hintText: 'Code.',
+                                  fillColor:
+                                      AppColor.secondary.withOpacity(0.25),
+                                  isDense: true,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  filled: true,
+                                ),
                               ),
-                              filled: true,
                             ),
-                          ),
-                        ),
-                        showCancelBtn: true,
-                      );
-                    },
+                            showCancelBtn: true,
+                          );
+                        },
           child: Text('Join as Member'),
           style: ButtonStyle(
             backgroundColor: MaterialStateProperty.all<Color>(
-                kamitteeDetails['host_id'] == user.uid
+                int.parse(kamitteeDetails['members_needed']) <
+                        int.parse(kamitteeDetails['members_total'])
                     ? AppColor.secondary
-                    : kamitteeDetails['members_list'].contains(user.uid)
+                    : kamitteeDetails['host_id'] == user.uid
                         ? AppColor.secondary
-                        : AppColor.appThemeColor),
+                        : kamitteeDetails['members_list'].contains(user.uid)
+                            ? AppColor.secondary
+                            : AppColor.appThemeColor),
             foregroundColor: MaterialStateProperty.all<Color>(AppColor.white),
             overlayColor: MaterialStateProperty.all<Color>(
               AppColor.white.withOpacity(0.1),

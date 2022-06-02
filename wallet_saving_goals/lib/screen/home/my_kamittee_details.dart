@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
@@ -435,38 +434,18 @@ class MyKamitteeDetails extends StatelessWidget {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(15.0),
         child: ElevatedButton(
-          onPressed: () {
-            CoolAlert.show(
-              context: context,
-              confirmBtnColor: AppColor.appThemeColor,
-              barrierDismissible: false,
-              type: CoolAlertType.custom,
-              text: 'Please enter your invite code',
-              onConfirmBtnTap: () {},
-              confirmBtnText: 'Join',
-              backgroundColor: AppColor.fonts,
-              widget: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  onChanged: (value) {},
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    hintText: 'Code.',
-                    fillColor: AppColor.secondary.withOpacity(0.25),
-                    isDense: true,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide.none,
-                    ),
-                    filled: true,
-                  ),
-                ),
-              ),
-              showCancelBtn: true,
-            );
-          },
-          child: Text('Proceed'),
+          onPressed:  int.parse(kamitteeDetails['members_needed']) ==
+                  int.parse(kamitteeDetails['members_total'])
+              ? () {}
+              : () {},
+          child: Text('Initiate Kamittee'),
           style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(
+              int.parse(kamitteeDetails['members_needed']) ==
+                  int.parse(kamitteeDetails['members_total'])
+                  ? AppColor.appThemeColor
+                  : AppColor.secondary,
+            ),
             foregroundColor: MaterialStateProperty.all<Color>(AppColor.white),
             overlayColor: MaterialStateProperty.all<Color>(
               AppColor.white.withOpacity(0.1),

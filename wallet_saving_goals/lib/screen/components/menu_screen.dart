@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
@@ -62,6 +63,7 @@ class MenuScreen extends StatelessWidget {
             children: [
               ListTile(
                 onTap: () {
+                  ZoomDrawer.of(context).close();
                   Get.to(Profile());
                 },
                 leading: Icon(
@@ -74,6 +76,7 @@ class MenuScreen extends StatelessWidget {
               prefs.getString('UserType') == 'host'
                   ? ListTile(
                       onTap: () {
+                        ZoomDrawer.of(context).close();
                         CoolAlert.show(
                           context: context,
                           confirmBtnColor: AppColor.appThemeColor,
@@ -98,6 +101,7 @@ class MenuScreen extends StatelessWidget {
                     )
                   : ListTile(
                       onTap: () {
+                        ZoomDrawer.of(context).close();
                         CoolAlert.show(
                           context: context,
                           confirmBtnColor: AppColor.appThemeColor,
@@ -122,6 +126,7 @@ class MenuScreen extends StatelessWidget {
                     ),
               ListTile(
                 onTap: () {
+                  ZoomDrawer.of(context).close();
                   Get.to(InboxScreen());
                 },
                 leading: Icon(
@@ -132,7 +137,9 @@ class MenuScreen extends StatelessWidget {
                 title: Text('Messages'),
               ),
               ListTile(
-                onTap: () {},
+                onTap: () {
+                  ZoomDrawer.of(context).close();
+                },
                 leading: Icon(
                   Icons.share,
                   color: AppColor.fonts,
@@ -141,7 +148,9 @@ class MenuScreen extends StatelessWidget {
                 title: Text('Share'),
               ),
               ListTile(
-                onTap: () {},
+                onTap: () {
+                  ZoomDrawer.of(context).close();
+                },
                 leading: Icon(
                   Icons.policy_outlined,
                   color: AppColor.fonts,
@@ -151,6 +160,7 @@ class MenuScreen extends StatelessWidget {
               ),
               ListTile(
                 onTap: () {
+                  ZoomDrawer.of(context).close();
                   CoolAlert.show(
                     context: context,
                     backgroundColor: AppColor.fonts,
