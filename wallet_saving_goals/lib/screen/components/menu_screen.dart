@@ -2,11 +2,14 @@ import 'dart:async';
 
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/main.dart';
 import 'package:wallet_saving_goals/screen/auth/splash_screen.dart';
 import 'package:wallet_saving_goals/screen/components/components.dart';
+import 'package:wallet_saving_goals/screen/inbox_screen.dart';
+import 'package:wallet_saving_goals/screen/profile.dart';
 import 'package:wallet_saving_goals/utils/auth_helper.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -58,6 +61,9 @@ class MenuScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ListTile(
+                onTap: () {
+                  Get.to(Profile());
+                },
                 leading: Icon(
                   Icons.person_outlined,
                   color: AppColor.fonts,
@@ -115,6 +121,18 @@ class MenuScreen extends StatelessWidget {
                       title: Text('Switch to Host'),
                     ),
               ListTile(
+                onTap: () {
+                  Get.to(InboxScreen());
+                },
+                leading: Icon(
+                  FontAwesome.chat_empty,
+                  color: AppColor.fonts,
+                  size: 20,
+                ),
+                title: Text('Messages'),
+              ),
+              ListTile(
+                onTap: () {},
                 leading: Icon(
                   Icons.share,
                   color: AppColor.fonts,
@@ -123,14 +141,7 @@ class MenuScreen extends StatelessWidget {
                 title: Text('Share'),
               ),
               ListTile(
-                leading: Icon(
-                  Icons.mail_outline_outlined,
-                  color: AppColor.fonts,
-                  size: 20,
-                ),
-                title: Text('Support'),
-              ),
-              ListTile(
+                onTap: () {},
                 leading: Icon(
                   Icons.policy_outlined,
                   color: AppColor.fonts,
@@ -153,7 +164,7 @@ class MenuScreen extends StatelessWidget {
                         Timer(const Duration(seconds: 3), () {
                           Navigator.of(context).pop();
                           prefs.clear();
-                          Get.off(SplashScreen());
+                          Get.offAll(SplashScreen());
                         });
                       });
                     },

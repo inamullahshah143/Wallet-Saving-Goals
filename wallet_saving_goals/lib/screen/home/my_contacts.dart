@@ -1,7 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:contacts_service/contacts_service.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:wallet_saving_goals/chat/chat_room.dart';
+import 'package:wallet_saving_goals/main.dart';
+import 'package:wallet_saving_goals/utils/chat_helper.dart';
 import 'package:wallet_saving_goals/utils/contacts_helper.dart';
 
 class MyContacts extends StatefulWidget {
@@ -31,6 +36,7 @@ class _MyContactsState extends State<MyContacts> {
   Future<void> _askPermissions() async {
     PermissionStatus permissionStatus = await _getContactPermission();
     if (permissionStatus == PermissionStatus.granted) {
+      Get.reload();
     } else {
       _handleInvalidPermissions(permissionStatus);
     }
@@ -94,7 +100,10 @@ class _MyContactsState extends State<MyContacts> {
                         children: [
                           WidgetSpan(
                             child: IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                ContactHelper().callNumber(
+                                    context, contactList[index]['phone_no']);
+                              },
                               icon: Icon(
                                 Icons.call,
                               ),
@@ -102,7 +111,28 @@ class _MyContactsState extends State<MyContacts> {
                           ),
                           WidgetSpan(
                             child: IconButton(
-                              onPressed: () {},
+                              onPressed: () async {
+                                await FirebaseFirestore.instance
+                                    .collection('user')
+                                    .where('phone_no',
+                                        isEqualTo: contactList[index]
+                                            ['phone_no'])
+                                    .get()
+                                    .then((value) {
+                                  String roomId = ChatHelper().chatRoomId(
+                                      value.docs.first.data()['username'],
+                                      prefs.getString('Username').toString());
+                                  Get.to(
+                                    ChatRoom(
+                                      holderId: value.docs.first.id,
+                                      userMap: value.docs.first.data(),
+                                      chatRoomId: roomId,
+                                      phoneNumber: contactList[index]
+                                          ['phone_no'],
+                                    ),
+                                  );
+                                });
+                              },
                               icon: Icon(
                                 FontAwesome.chat_empty,
                               ),

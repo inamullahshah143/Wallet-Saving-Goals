@@ -389,30 +389,8 @@ class MyKamitteeDetails extends StatelessWidget {
                   ? Container()
                   : snapshot.hasData
                       ? ListTile(
-                          title: Text(snapshot.data['fullName'].toString()),
+                          title: Text(snapshot.data['username'].toString()),
                           subtitle: Text(snapshot.data['email'].toString()),
-                          trailing: RichText(
-                            text: TextSpan(
-                              children: [
-                                WidgetSpan(
-                                  child: IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.call,
-                                    ),
-                                  ),
-                                ),
-                                WidgetSpan(
-                                  child: IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      FontAwesome.chat_empty,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                         )
                       : Center(
                           child: Text(

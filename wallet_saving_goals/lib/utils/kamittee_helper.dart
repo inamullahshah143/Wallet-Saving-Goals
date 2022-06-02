@@ -12,6 +12,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:wallet_saving_goals/main.dart';
 import 'package:wallet_saving_goals/screen/components/invitation_card.dart';
 import 'package:wallet_saving_goals/screen/components/kamittee_card.dart';
+import 'package:wallet_saving_goals/utils/contacts_helper.dart';
 
 class KamitteeHelper extends GetxController {
   Future<String> uploadImage(File thumbnailPath) async {
@@ -137,14 +138,17 @@ class KamitteeHelper extends GetxController {
             x.add(
               ListTile(
                 dense: true,
-                title: Text(userData.data()['fullName']),
+                title: Text(userData.data()['username']),
                 subtitle: Text(userData.data()['email']),
                 trailing: RichText(
                   text: TextSpan(
                     children: [
                       WidgetSpan(
                         child: IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            ContactHelper().callNumber(
+                                context, userData.data()['phone_no']);
+                          },
                           icon: Icon(
                             Icons.call,
                           ),

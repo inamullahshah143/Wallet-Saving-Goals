@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/main.dart';
 import 'package:wallet_saving_goals/screen/components/components.dart';
+import 'package:wallet_saving_goals/utils/contacts_helper.dart';
 import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
 
 class ViewKamitteeDetails extends StatelessWidget {
@@ -280,14 +281,17 @@ class ViewKamitteeDetails extends StatelessWidget {
                   ? Container()
                   : snapshot.hasData
                       ? ListTile(
-                          title: Text(snapshot.data['fullName'].toString()),
+                          title: Text(snapshot.data['username'].toString()),
                           subtitle: Text(snapshot.data['email'].toString()),
                           trailing: RichText(
                             text: TextSpan(
                               children: [
                                 WidgetSpan(
                                   child: IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      ContactHelper().callNumber(context,
+                                          snapshot.data['phone_no'].toString());
+                                    },
                                     icon: Icon(
                                       Icons.call,
                                     ),

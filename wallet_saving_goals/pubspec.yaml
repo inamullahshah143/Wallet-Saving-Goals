@@ -55,6 +55,10 @@ dependencies:
   permission_handler: ^9.2.0
   intl_phone_number_input: ^0.7.0+2
   image_picker: ^0.8.5+3
+  uuid: ^3.0.6
+  url_launcher: ^6.1.2
+  flutter_chat_bubble: ^2.0.0
+  flutter_phone_direct_caller: ^2.1.1
   
 
 dev_dependencies:

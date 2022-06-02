@@ -23,7 +23,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final isVisible = true.obs;
 
   final String initialCountry = 'PK';
-  final PhoneNumber number = PhoneNumber(isoCode: 'PK');
+  final PhoneNumber number = PhoneNumber(isoCode: 'PK', dialCode: '0');
   final isValidNo = true.obs;
   final formKey = GlobalKey<FormState>();
   final TextEditingController fullName = TextEditingController();
@@ -282,14 +282,15 @@ class _SignupScreenState extends State<SignupScreen> {
                                 .collection('user')
                                 .doc(result.user.uid)
                                 .set({
-                              'fullName': fullName.text,
+                              'username': fullName.text,
                               'email': email.text,
-                              'phoneNo': phoneNo.text,
+                              'phone_no': '${number.dialCode}${phoneNo.text}',
                             }).whenComplete(() {
                               prefs.setString('Username', fullName.text);
                               prefs.setString('UserID', result.user.uid);
                               prefs.setString('Email', email.text);
-                              prefs.setString('PhoneNo', phoneNo.text);
+                              prefs.setString(
+                                  'PhoneNo', '${number.dialCode}${phoneNo.text}');
                               prefs.setString('UserType', 'host');
                               Navigator.of(context).pop();
                               Components.showSnackBar(
