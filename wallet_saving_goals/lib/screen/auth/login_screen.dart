@@ -79,6 +79,7 @@ class LoginScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(15.0),
                       child: TextFormField(
                         controller: email,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) => Helper.validateEmail(value),
                         decoration: InputDecoration(
                           hintText: 'Email Address',
@@ -105,6 +106,8 @@ class LoginScreen extends StatelessWidget {
                             validator: (value) =>
                                 Helper.validatePassword(value),
                             obscureText: isVisible.value,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             decoration: InputDecoration(
                               isDense: true,
                               filled: true,
@@ -114,6 +117,7 @@ class LoginScreen extends StatelessWidget {
                                 borderSide: BorderSide.none,
                               ),
                               hintText: 'Password',
+                              errorMaxLines: 6,
                               hintStyle: TextStyle(
                                 color: AppColor.fonts.withOpacity(0.5),
                                 fontSize: 14,
@@ -217,6 +221,8 @@ class LoginScreen extends StatelessWidget {
                               prefs.setString('Email', value.data()['email']);
                               prefs.setString(
                                   'PhoneNo', value.data()['phone_no']);
+                              prefs.setString('ProfilePicture',
+                                  value.data()['profile_picture'].toString());
                               prefs.setString('UserType', accountType.value);
                               Navigator.of(context).pop();
                               Components.showSnackBar(context, 'Wellcome back');
@@ -348,6 +354,8 @@ class LoginScreen extends StatelessWidget {
                                       'Email', value.email.toString());
                                   prefs.setString('PhoneNo',
                                       '${number.dialCode}${phoneNo.text}');
+                                  prefs.setString(
+                                      'ProfilePicture', value.photoURL.toString());
                                   prefs.setString(
                                       'UserType', accountType.value);
                                   Navigator.of(context).pop();

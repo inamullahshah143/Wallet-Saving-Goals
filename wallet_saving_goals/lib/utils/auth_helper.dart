@@ -85,4 +85,13 @@ class AuthenticationHelper {
       Components.showSnackBar(context, e.message);
     }
   }
+
+  Future changePassword(context, newPassword) async {
+    try {
+      await FirebaseAuth.instance.currentUser.updatePassword(newPassword);
+    } on FirebaseAuthException catch (e) {
+      Navigator.of(context).pop();
+      Components.showSnackBar(context, e.message);
+    }
+  }
 }

@@ -11,7 +11,7 @@ class ForgetPassword extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColor.pagesColor,
+      backgroundColor: AppColor.pagesColor,
       appBar: AppBar(
         backgroundColor: AppColor.pagesColor,
         elevation: 0,
@@ -65,6 +65,7 @@ class ForgetPassword extends StatelessWidget {
                 padding: const EdgeInsets.all(15.0),
                 child: TextFormField(
                   controller: email,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) => Helper.validateEmail(value),
                   decoration: InputDecoration(
                     isDense: true,

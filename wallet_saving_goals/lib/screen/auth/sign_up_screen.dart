@@ -110,6 +110,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       padding: const EdgeInsets.all(15.0),
                       child: TextFormField(
                         controller: email,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
                         validator: (value) => Helper.validateEmail(value),
                         decoration: InputDecoration(
                           isDense: true,
@@ -179,8 +180,11 @@ class _SignupScreenState extends State<SignupScreen> {
                             validator: (value) =>
                                 Helper.validatePassword(value),
                             obscureText: isVisible.value,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             decoration: InputDecoration(
                               isDense: true,
+                              errorMaxLines: 6,
                               filled: true,
                               fillColor: AppColor.secondary.withOpacity(0.25),
                               border: OutlineInputBorder(
@@ -218,6 +222,8 @@ class _SignupScreenState extends State<SignupScreen> {
                           padding: const EdgeInsets.all(15.0),
                           child: TextFormField(
                             controller: confirmPassword,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
                             validator: (value) {
                               if (value.isEmpty) {
                                 return 'please enter your confirm password';
@@ -289,8 +295,8 @@ class _SignupScreenState extends State<SignupScreen> {
                               prefs.setString('Username', fullName.text);
                               prefs.setString('UserID', result.user.uid);
                               prefs.setString('Email', email.text);
-                              prefs.setString(
-                                  'PhoneNo', '${number.dialCode}${phoneNo.text}');
+                              prefs.setString('PhoneNo',
+                                  '${number.dialCode}${phoneNo.text}');
                               prefs.setString('UserType', 'host');
                               Navigator.of(context).pop();
                               Components.showSnackBar(

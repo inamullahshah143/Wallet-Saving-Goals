@@ -19,21 +19,10 @@ class Helper {
       return 'please enter your password';
     } else {
       if (!regex.hasMatch(value)) {
-        return 'enter valid password';
+        return 'password must contain atleast:\n- 8 character\n- atleast 1 lower case\n- atleast 1 upper case\n- atleast 1 numaric value\n- atleast on special character';
       } else {
         return null;
       }
     }
-  }
-
-  static String validateMobile(String value) {
-    String patttern = r'(^(?:[+0]9)?[0-9]{10,12}$)';
-    RegExp regExp = RegExp(patttern);
-    if (value.isEmpty) {
-      return 'please enter your mobile number';
-    } else if (!regExp.hasMatch(value)) {
-      return 'please enter valid mobile number';
-    }
-    return null;
   }
 }

@@ -12,9 +12,10 @@ FirebaseAuth _auth;
 get user => _auth.currentUser;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await Firebase.initializeApp().whenComplete(() async {
-
-  _auth = await FirebaseAuth.instance;
+    _auth = await FirebaseAuth.instance;
   });
   prefs = await SharedPreferences.getInstance();
   runApp(const MyApp());

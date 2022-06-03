@@ -56,7 +56,43 @@ class KamitteeHelper extends GetxController {
     await FirebaseFirestore.instance
         .collection('kamittee')
         .where('members_list', arrayContains: user.uid)
-        .where('status', isEqualTo: 1)
+        .get()
+        .then(
+      (value) {
+        for (var item in value.docs) {
+          x.add(KamitteeCard(
+            amount: item.data()['kamittee_amount'],
+            duration: item.data()['kamittee_duration'],
+            members:
+                '${item.data()['members_total']}/${item.data()['members_needed']}',
+            title: item.data()['kamittee_purpose'],
+            kamitteeDetails: item.data(),
+            kamitteeId: item.id,
+          ));
+        }
+      },
+    );
+    yield x.length > 0
+        ? ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: x.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return x[index];
+            },
+          )
+        : Expanded(
+            child: Center(
+              child: Text('No Kamittee Found'),
+            ),
+          );
+  }
+
+  Stream<Widget> getHostKamitteeRecords(context) async* {
+    List<Widget> x = [];
+    await FirebaseFirestore.instance
+        .collection('kamittee')
+        .where('host_id', isEqualTo: user.uid)
         .get()
         .then(
       (value) {
@@ -186,5 +222,49 @@ class KamitteeHelper extends GetxController {
               child: Text('No Kamittee Found'),
             ),
           );
+  }
+
+  Future initiateKamittee(kamitteeId) async {
+    List<String> kamitteeMembers = [];
+    List<Map<String, dynamic>> allocatedKamittees = [];
+    Map<String, dynamic> kamitteeData = {};
+    await FirebaseFirestore.instance
+        .collection('kamittee')
+        .doc(kamitteeId)
+        .get()
+        .then((value) {
+      kamitteeMembers.add(value.data()['host_id']);
+      for (var item in value.data()['members_list']) {
+        kamitteeMembers.add(item);
+      }
+      kamitteeMembers.shuffle();
+      for (var i = 0; i < kamitteeMembers.length; i++) {
+        allocatedKamittees.add({
+          'member_id': kamitteeMembers[i],
+          'kamittee_no': i + 1,
+          'status':'0',
+        });
+      }
+
+      kamitteeData = {
+        'host_id': value.data()['host_id'],
+        'kamittee_amount': value.data()['kamittee_amount'],
+        'kamittee_duration': value.data()['kamittee_duration'],
+        'starting_date': value.data()['starting_date'],
+        'host_cnic_front': value.data()['host_cnic_front'],
+        'host_cnic_back': value.data()['host_cnic_back'],
+        'host_selfie': value.data()['host_selfie'],
+        'kamittee_purpose': value.data()['kamittee_purpose'],
+        'members_total': value.data()['members_total'],
+        'members_needed': value.data()['members_needed'],
+        'kamittes': allocatedKamittees,
+      };
+    }).whenComplete(() {
+      print(kamitteeData);
+      FirebaseFirestore.instance
+          .collection('ongoing_kamittees')
+          .doc()
+          .set(kamitteeData);
+    });
   }
 }
