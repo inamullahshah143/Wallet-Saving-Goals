@@ -80,7 +80,7 @@ class _MyKamitteesState extends State<MyKamittees> {
                           },
                         ),
                         StreamBuilder(
-                          stream: KamitteeHelper().getKamitteeRecords(context),
+                          stream: KamitteeHelper().getOngoingKamitteeRecords(context),
                           builder: (context, snapshot) {
                             return snapshot.connectionState ==
                                     ConnectionState.waiting
@@ -102,7 +102,6 @@ class _MyKamitteesState extends State<MyKamittees> {
                       ],
                     ),
                   ),
-                
                 ],
               ),
             ),

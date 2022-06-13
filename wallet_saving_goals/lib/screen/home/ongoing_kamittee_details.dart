@@ -1,9 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
 
 class OngoingDetails extends StatelessWidget {
   final Map<String, dynamic> kamitteeDetails;
@@ -153,50 +153,6 @@ class OngoingDetails extends StatelessWidget {
                   ),
                 )
               ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Text(
-              'Referral Code',
-              style: TextStyle(
-                color: AppColor.fonts,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: Center(
-              child: RichText(
-                text: TextSpan(
-                  style: TextStyle(
-                    color: AppColor.fonts,
-                  ),
-                  children: [
-                    TextSpan(
-                      text: kamitteeDetails['referral_code'],
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '   ',
-                    ),
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.copy,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ),
           Padding(
@@ -374,74 +330,13 @@ class OngoingDetails extends StatelessWidget {
             ),
           ),
           StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('user')
-                .doc(kamitteeDetails['host_id'])
-                .snapshots(),
+            stream: KamitteeHelper().getOngoingKamitteeMembers(
+                context, kamitteeId, kamitteeDetails['host_id']),
             builder: (context, snapshot) {
               return snapshot.connectionState == ConnectionState.waiting
                   ? Container()
                   : snapshot.hasData
-                      ? Card(
-                          child: Column(
-                            children: [
-                              ListTile(
-                                trailing: Container(
-                                  padding: EdgeInsets.all(5),
-                                  decoration: BoxDecoration(
-                                    color: AppColor.fonts,
-                                    borderRadius: BorderRadius.circular(
-                                      10,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'Host',
-                                    style: TextStyle(
-                                      color: AppColor.white,
-                                    ),
-                                  ),
-                                ),
-                                title:
-                                    Text(snapshot.data['username'].toString()),
-                                subtitle:
-                                    Text(snapshot.data['email'].toString()),
-                              ),
-                              ButtonBar(
-                                children: [
-                                  SizedBox(width: 10),
-                                  Container(
-                                    padding: EdgeInsets.all(5),
-                                    decoration: BoxDecoration(
-                                      color: AppColor.red,
-                                      borderRadius: BorderRadius.circular(
-                                        10,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'Un-paid',
-                                      style: TextStyle(
-                                        color: AppColor.white,
-                                      ),
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      Icons.call,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(
-                                      FontAwesome.chat_empty,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        )
+                      ? snapshot.data
                       : Center(
                           child: Text(
                             'No Record Found',
@@ -452,51 +347,16 @@ class OngoingDetails extends StatelessWidget {
                         );
             },
           ),
-          Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: Text(
-              'Members List',
-              style: TextStyle(
-                color: AppColor.fonts,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-            ),
-          ),
-          // StreamBuilder(
-          //   stream: KamitteeHelper().getKamitteeMembers(context, kamitteeId),
-          //   builder: (context, snapshot) {
-          //     return snapshot.connectionState == ConnectionState.waiting
-          //         ? Container()
-          //         : snapshot.hasData
-          //             ? snapshot.data
-          //             : Center(
-          //                 child: Text(
-          //                   'No Record Found',
-          //                   style: TextStyle(
-          //                     color: AppColor.secondary,
-          //                   ),
-          //                 ),
-          //               );
-          //   },
-          // ),
         ],
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(15.0),
         child: ElevatedButton(
-          onPressed: int.parse(kamitteeDetails['members_needed']) ==
-                  int.parse(kamitteeDetails['members_total'])
-              ? () {}
-              : () {},
+          onPressed: () {},
           child: Text('Proceed to Pay'),
           style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(
-              int.parse(kamitteeDetails['members_needed']) ==
-                      int.parse(kamitteeDetails['members_total'])
-                  ? AppColor.appThemeColor
-                  : AppColor.secondary,
-            ),
+            backgroundColor:
+                MaterialStateProperty.all<Color>(AppColor.appThemeColor),
             foregroundColor: MaterialStateProperty.all<Color>(AppColor.white),
             overlayColor: MaterialStateProperty.all<Color>(
               AppColor.white.withOpacity(0.1),

@@ -9,9 +9,16 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:wallet_saving_goals/chat/chat_room.dart';
+import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/main.dart';
+import 'package:wallet_saving_goals/screen/components/components.dart';
 import 'package:wallet_saving_goals/screen/components/invitation_card.dart';
 import 'package:wallet_saving_goals/screen/components/kamittee_card.dart';
+import 'package:wallet_saving_goals/screen/home/my_kamittee_details.dart';
+import 'package:wallet_saving_goals/screen/home/ongoing_kamittee_details.dart';
+import 'package:wallet_saving_goals/screen/home/view_kamittee_joining_details.dart';
+import 'package:wallet_saving_goals/utils/chat_helper.dart';
 import 'package:wallet_saving_goals/utils/contacts_helper.dart';
 
 class KamitteeHelper extends GetxController {
@@ -53,22 +60,50 @@ class KamitteeHelper extends GetxController {
 
   Stream<Widget> getKamitteeRecords(context) async* {
     List<Widget> x = [];
-    await FirebaseFirestore.instance
-        .collection('kamittee')
-        .where('members_list', arrayContains: user.uid)
-        .get()
-        .then(
+    await FirebaseFirestore.instance.collection('kamittee').get().then(
       (value) {
         for (var item in value.docs) {
-          x.add(KamitteeCard(
-            amount: item.data()['kamittee_amount'],
-            duration: item.data()['kamittee_duration'],
-            members:
-                '${item.data()['members_total']}/${item.data()['members_needed']}',
-            title: item.data()['kamittee_purpose'],
-            kamitteeDetails: item.data(),
-            kamitteeId: item.id,
-          ));
+          if (item.data()['members_list'].contains(user.uid)) {
+            x.add(
+              KamitteeCard(
+                amount: item.data()['kamittee_amount'],
+                duration: item.data()['kamittee_duration'],
+                members:
+                    '${item.data()['members_total']}/${item.data()['members_needed']}',
+                title: item.data()['kamittee_purpose'],
+                kamitteeDetails: item.data(),
+                kamitteeId: item.id,
+                onPressed: () {
+                  Get.to(
+                    ViewKamitteeDetails(
+                      kamitteeDetails: item.data(),
+                      kamitteeId: item.id,
+                    ),
+                  );
+                },
+              ),
+            );
+          } else {
+            x.add(
+              KamitteeCard(
+                amount: item.data()['kamittee_amount'],
+                duration: item.data()['kamittee_duration'],
+                members:
+                    '${item.data()['members_total']}/${item.data()['members_needed']}',
+                title: item.data()['kamittee_purpose'],
+                kamitteeDetails: item.data(),
+                kamitteeId: item.id,
+                onPressed: () {
+                  Get.to(
+                    MyKamitteeDetails(
+                      kamitteeDetails: item.data(),
+                      kamitteeId: item.id,
+                    ),
+                  );
+                },
+              ),
+            );
+          }
         }
       },
     );
@@ -88,24 +123,34 @@ class KamitteeHelper extends GetxController {
           );
   }
 
-  Stream<Widget> getHostKamitteeRecords(context) async* {
+  Stream<Widget> getOngoingKamitteeRecords(context) async* {
     List<Widget> x = [];
-    await FirebaseFirestore.instance
-        .collection('kamittee')
-        .where('host_id', isEqualTo: user.uid)
-        .get()
-        .then(
+    await FirebaseFirestore.instance.collection('ongoing_kamittees').get().then(
       (value) {
         for (var item in value.docs) {
-          x.add(KamitteeCard(
-            amount: item.data()['kamittee_amount'],
-            duration: item.data()['kamittee_duration'],
-            members:
-                '${item.data()['members_total']}/${item.data()['members_needed']}',
-            title: item.data()['kamittee_purpose'],
-            kamitteeDetails: item.data(),
-            kamitteeId: item.id,
-          ));
+          for (var data in item.data()['kamittes']) {
+            if (data['member_id'] == user.uid) {
+              x.add(
+                KamitteeCard(
+                  amount: item.data()['kamittee_amount'],
+                  duration: item.data()['kamittee_duration'],
+                  members:
+                      '${item.data()['members_total']}/${item.data()['members_needed']}',
+                  title: item.data()['kamittee_purpose'],
+                  kamitteeDetails: item.data(),
+                  kamitteeId: item.id,
+                  onPressed: () {
+                    Get.to(
+                      OngoingDetails(
+                        kamitteeDetails: item.data(),
+                        kamitteeId: item.id,
+                      ),
+                    );
+                  },
+                ),
+              );
+            }
+          }
         }
       },
     );
@@ -224,7 +269,126 @@ class KamitteeHelper extends GetxController {
           );
   }
 
-  Future initiateKamittee(kamitteeId) async {
+  Stream<Widget> getOngoingKamitteeMembers(context, kamitteeId, hostId) async* {
+    List<Widget> x = [];
+    await FirebaseFirestore.instance
+        .collection('ongoing_kamittees')
+        .doc(kamitteeId)
+        .get()
+        .then(
+      (value) async {
+        for (var item in value.data()['kamittes']) {
+          await FirebaseFirestore.instance
+              .collection('user')
+              .doc(item['member_id'])
+              .get()
+              .then(
+            (userData) {
+              print(item['kamittee_no'].toString());
+              print(item['member_id'].toString());
+              print(item['status'].toString());
+              x.add(
+                Card(
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      child: Text(
+                        item['kamittee_no'].toString(),
+                      ),
+                    ),
+                    trailing: Card(
+                      color: AppColor.fonts,
+                      child: item['member_id'] == hostId
+                          ? Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                'Host',
+                                style: TextStyle(
+                                  color: AppColor.white,
+                                ),
+                              ),
+                            )
+                          : Text(''),
+                    ),
+                    title: Text(userData.data()['username'].toString()),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(userData.data()['email'].toString()),
+                        ButtonBar(
+                          alignment: MainAxisAlignment.start,
+                          children: [
+                            item['member_id'] == user.uid
+                                ? IconButton(
+                                    onPressed: () {
+                                      ContactHelper().callNumber(
+                                          context, userData.data()['phone_no']);
+                                    },
+                                    icon: Icon(
+                                      Icons.call,
+                                    ),
+                                  )
+                                : SizedBox(),
+                            item['member_id'] == user.uid
+                                ? IconButton(
+                                    onPressed: () {
+                                      String roomId = ChatHelper().chatRoomId(
+                                          userData.data()['username'],
+                                          prefs
+                                              .getString('Username')
+                                              .toString());
+                                      Get.to(
+                                        ChatRoom(
+                                          holderId: userData.id,
+                                          userMap: userData.data(),
+                                          chatRoomId: roomId,
+                                          phoneNumber:
+                                              userData.data()['phone_no'],
+                                        ),
+                                      );
+                                    },
+                                    icon: Icon(
+                                      FontAwesome.chat_empty,
+                                    ),
+                                  )
+                                : SizedBox(),
+                            Text(
+                              item['status'] == '0' ? 'Un-paid' : 'Paid',
+                              style: TextStyle(
+                                color: item['status'] == '0'
+                                    ? AppColor.red
+                                    : Colors.green,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
+    yield x.length > 0
+        ? ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: x.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return x[index];
+            },
+          )
+        : Expanded(
+            child: Center(
+              child: Text('No Kamittee Found'),
+            ),
+          );
+  }
+
+  Future initiateKamittee(context, kamitteeId) async {
+    Components.showAlertDialog(context);
     List<String> kamitteeMembers = [];
     List<Map<String, dynamic>> allocatedKamittees = [];
     Map<String, dynamic> kamitteeData = {};
@@ -242,7 +406,7 @@ class KamitteeHelper extends GetxController {
         allocatedKamittees.add({
           'member_id': kamitteeMembers[i],
           'kamittee_no': i + 1,
-          'status':'0',
+          'status': '0',
         });
       }
 
@@ -259,12 +423,23 @@ class KamitteeHelper extends GetxController {
         'members_needed': value.data()['members_needed'],
         'kamittes': allocatedKamittees,
       };
-    }).whenComplete(() {
-      print(kamitteeData);
-      FirebaseFirestore.instance
+    }).whenComplete(() async {
+      await FirebaseFirestore.instance
           .collection('ongoing_kamittees')
           .doc()
-          .set(kamitteeData);
+          .set(kamitteeData)
+          .whenComplete(() async {
+        await FirebaseFirestore.instance
+            .collection('kamittee')
+            .doc(kamitteeId)
+            .delete()
+            .whenComplete(() {
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+          Components.showSnackBar(
+              context, 'Your kamittee Initiated Successfully');
+        });
+      });
     });
   }
 }

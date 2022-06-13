@@ -437,7 +437,7 @@ class MyKamitteeDetails extends StatelessWidget {
           onPressed: int.parse(kamitteeDetails['members_needed']) ==
                   int.parse(kamitteeDetails['members_total'])
               ? () {
-                  KamitteeHelper().initiateKamittee(kamitteeId);
+                  KamitteeHelper().initiateKamittee(context, kamitteeId);
                 }
               : () {},
           child: Text('Initiate Kamittee'),

@@ -5,8 +5,8 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/screen/home/kamittee_host/host_dashboard.dart';
-import 'package:wallet_saving_goals/screen/home/kamittee_host/host_kamittees.dart';
 import 'package:wallet_saving_goals/screen/home/my_contacts.dart';
+import 'package:wallet_saving_goals/screen/home/my_kamittees.dart';
 
 class HostHomeScreen extends StatefulWidget {
   HostHomeScreen({Key key}) : super(key: key);
@@ -55,7 +55,7 @@ class _HostHomeScreenState extends State<HostHomeScreen> {
       ),
       body: SafeArea(
         child: bottomIndex == 0
-            ? HostKamittees()
+            ? MyKamittees()
             : bottomIndex == 1
                 ? HostDashboard()
                 : bottomIndex == 2

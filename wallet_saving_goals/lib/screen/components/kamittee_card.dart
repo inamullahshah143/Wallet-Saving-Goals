@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
-import 'package:get/get.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
-import 'package:wallet_saving_goals/screen/home/my_kamittee_details.dart';
 
 class KamitteeCard extends StatelessWidget {
   final String title;
@@ -12,6 +10,7 @@ class KamitteeCard extends StatelessWidget {
   final String amount;
   final Map<String, dynamic> kamitteeDetails;
   final String kamitteeId;
+  final VoidCallback onPressed;
   const KamitteeCard({
     Key key,
     @required this.title,
@@ -20,6 +19,7 @@ class KamitteeCard extends StatelessWidget {
     @required this.amount,
     @required this.kamitteeDetails,
     @required this.kamitteeId,
+    @required this.onPressed,
   }) : super(key: key);
 
   @override
@@ -104,12 +104,7 @@ class KamitteeCard extends StatelessWidget {
             ButtonBar(
               children: [
                 ElevatedButton(
-                  onPressed: () {
-                    Get.to(MyKamitteeDetails(
-                      kamitteeDetails: kamitteeDetails,
-                      kamitteeId: kamitteeId,
-                    ));
-                  },
+                  onPressed: onPressed,
                   child: Text('View Details'),
                 ),
               ],
