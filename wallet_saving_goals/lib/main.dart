@@ -15,7 +15,7 @@ Future<void> main() async {
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await Firebase.initializeApp().whenComplete(() async {
-    _auth = await FirebaseAuth.instance;
+    _auth = FirebaseAuth.instance;
   });
   prefs = await SharedPreferences.getInstance();
   runApp(const MyApp());
