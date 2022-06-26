@@ -58,7 +58,7 @@ class KamitteeHelper extends GetxController {
     }
   }
 
-  Stream<Widget> getKamitteeRecords(context) async* {
+  Future<Widget> getKamitteeRecords(context) async {
     List<Widget> x = [];
     await FirebaseFirestore.instance.collection('kamittee').get().then(
       (value) {
@@ -107,7 +107,7 @@ class KamitteeHelper extends GetxController {
         }
       },
     );
-    yield x.length > 0
+    return x.length > 0
         ? ListView.builder(
             physics: BouncingScrollPhysics(),
             itemCount: x.length,
@@ -123,7 +123,7 @@ class KamitteeHelper extends GetxController {
           );
   }
 
-  Stream<Widget> getOngoingKamitteeRecords(context) async* {
+  Future<Widget> getOngoingKamitteeRecords(context) async {
     List<Widget> x = [];
     await FirebaseFirestore.instance.collection('ongoing_kamittees').get().then(
       (value) {
@@ -154,7 +154,7 @@ class KamitteeHelper extends GetxController {
         }
       },
     );
-    yield x.length > 0
+    return x.length > 0
         ? ListView.builder(
             physics: BouncingScrollPhysics(),
             itemCount: x.length,
@@ -170,37 +170,51 @@ class KamitteeHelper extends GetxController {
           );
   }
 
-  Stream<Widget> getAllKamitteeRecords(context) async* {
-    List<Widget> x = [];
+  Stream<Widget> getAllKamitteeRecords(context, referalCode) async* {
+    List<Map<String, dynamic>> x = [];
     await FirebaseFirestore.instance.collection('kamittee').get().then(
       (value) {
         for (var item in value.docs) {
-          x.add(InvitationCard(
-            amount: item.data()['kamittee_amount'],
-            duration: item.data()['kamittee_duration'],
-            members:
-                '${item.data()['members_total']}/${item.data()['members_needed']}',
-            title: item.data()['kamittee_purpose'],
-            kamitteeDetails: item.data(),
-            kamitteeId: item.id,
-          ));
+          x.add(item.data());
         }
       },
     );
-    yield x.length > 0
-        ? ListView.builder(
-            physics: BouncingScrollPhysics(),
-            itemCount: x.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return x[index];
-            },
-          )
-        : Expanded(
+    yield ListView.builder(
+      physics: BouncingScrollPhysics(),
+      itemCount: x.length,
+      shrinkWrap: true,
+      itemBuilder: (context, index) {
+        if (referalCode.isEmpty) {
+          return InvitationCard(
+            amount: x[index]['kamittee_amount'],
+            duration: x[index]['kamittee_duration'],
+            members:
+                '${x[index]['members_total']}/${x[index]['members_needed']}',
+            title: x[index]['kamittee_purpose'],
+            kamitteeDetails: x[index],
+            kamitteeId: '',
+          );
+        } else if (x[index]['referal_code']
+            .toString()
+            .startsWith(referalCode)) {
+          return InvitationCard(
+            amount: x[index]['kamittee_amount'],
+            duration: x[index]['kamittee_duration'],
+            members:
+                '${x[index]['members_total']}/${x[index]['members_needed']}',
+            title: x[index]['kamittee_purpose'],
+            kamitteeDetails: x[index],
+            kamitteeId: '',
+          );
+        } else {
+          return Expanded(
             child: Center(
               child: Text('No Kamittee Found'),
             ),
           );
+        }
+      },
+    );
   }
 
   Stream<Widget> getKamitteeMembers(context, kamitteeId) async* {

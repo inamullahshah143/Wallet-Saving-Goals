@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
 
-class HolderDashboard extends StatelessWidget {
+class HolderDashboard extends StatefulWidget {
   HolderDashboard({Key key}) : super(key: key);
+
+  @override
+  State<HolderDashboard> createState() => _HolderDashboardState();
+}
+
+class _HolderDashboardState extends State<HolderDashboard> {
+  final referalCode = ''.obs;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,6 +60,9 @@ class HolderDashboard extends StatelessWidget {
               children: [
                 Flexible(
                   child: TextFormField(
+                    onChanged: (value) {
+                      referalCode.value = value;
+                    },
                     decoration: InputDecoration(
                       hintText: 'Referal Code',
                       isDense: true,
@@ -101,27 +113,30 @@ class HolderDashboard extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: StreamBuilder(
-              stream: KamitteeHelper().getAllKamitteeRecords(context),
-              builder: (context, snapshot) {
-                return snapshot.connectionState == ConnectionState.waiting
-                    ? Center(
-                        child: CircularProgressIndicator(),
-                      )
-                    : snapshot.hasData
-                        ? snapshot.data
-                        : Center(
-                            child: Text(
-                              'No Kamittee Found',
-                              style: TextStyle(
-                                color: AppColor.secondary,
+          Obx(() {
+            return Expanded(
+              child: StreamBuilder(
+                stream: KamitteeHelper()
+                    .getAllKamitteeRecords(context, referalCode.value),
+                builder: (context, snapshot) {
+                  return snapshot.connectionState == ConnectionState.waiting
+                      ? Center(
+                          child: CircularProgressIndicator(),
+                        )
+                      : snapshot.hasData
+                          ? snapshot.data
+                          : Center(
+                              child: Text(
+                                'No Kamittee Found',
+                                style: TextStyle(
+                                  color: AppColor.secondary,
+                                ),
                               ),
-                            ),
-                          );
-              },
-            ),
-          ),
+                            );
+                },
+              ),
+            );
+          }),
         ],
       ),
     );

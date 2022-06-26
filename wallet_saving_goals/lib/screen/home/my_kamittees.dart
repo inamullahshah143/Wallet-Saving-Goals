@@ -59,8 +59,8 @@ class _MyKamitteesState extends State<MyKamittees> {
                     child: TabBarView(
                       controller: tabController,
                       children: [
-                        StreamBuilder(
-                          stream: KamitteeHelper().getKamitteeRecords(context),
+                        FutureBuilder(
+                          future: KamitteeHelper().getKamitteeRecords(context),
                           builder: (context, snapshot) {
                             return snapshot.connectionState ==
                                     ConnectionState.waiting
@@ -79,8 +79,8 @@ class _MyKamitteesState extends State<MyKamittees> {
                                       );
                           },
                         ),
-                        StreamBuilder(
-                          stream: KamitteeHelper().getOngoingKamitteeRecords(context),
+                        FutureBuilder(
+                          future: KamitteeHelper().getOngoingKamitteeRecords(context),
                           builder: (context, snapshot) {
                             return snapshot.connectionState ==
                                     ConnectionState.waiting
