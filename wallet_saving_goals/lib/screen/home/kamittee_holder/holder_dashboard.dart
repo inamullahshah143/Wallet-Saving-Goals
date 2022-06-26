@@ -56,50 +56,24 @@ class _HolderDashboardState extends State<HolderDashboard> {
           ),
           Padding(
             padding: const EdgeInsets.all(15.0),
-            child: Row(
-              children: [
-                Flexible(
-                  child: TextFormField(
-                    onChanged: (value) {
-                      referalCode.value = value;
-                    },
-                    decoration: InputDecoration(
-                      hintText: 'Referal Code',
-                      isDense: true,
-                      filled: true,
-                      fillColor: AppColor.secondary.withOpacity(0.25),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide.none,
-                      ),
-                      hintStyle: TextStyle(
-                        color: AppColor.fonts.withOpacity(0.5),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ),
+            child: TextFormField(
+              onChanged: (value) {
+                referalCode.value = value;
+              },
+              decoration: InputDecoration(
+                hintText: 'Referal Code',
+                isDense: true,
+                filled: true,
+                fillColor: AppColor.secondary.withOpacity(0.25),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
                 ),
-                SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: Text('Join'),
-                  style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(AppColor.white),
-                    overlayColor: MaterialStateProperty.all<Color>(
-                      AppColor.white.withOpacity(0.1),
-                    ),
-                    minimumSize: MaterialStateProperty.all(
-                      Size(70, 45),
-                    ),
-                    shape: MaterialStateProperty.all(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  ),
-                )
-              ],
+                hintStyle: TextStyle(
+                  color: AppColor.fonts.withOpacity(0.5),
+                  fontSize: 14,
+                ),
+              ),
             ),
           ),
           Padding(

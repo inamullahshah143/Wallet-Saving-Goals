@@ -175,46 +175,53 @@ class KamitteeHelper extends GetxController {
     await FirebaseFirestore.instance.collection('kamittee').get().then(
       (value) {
         for (var item in value.docs) {
-          x.add(item.data());
+          x.add(item.data()..addAll({'id': item.id}));
         }
       },
     );
-    yield ListView.builder(
-      physics: BouncingScrollPhysics(),
-      itemCount: x.length,
-      shrinkWrap: true,
-      itemBuilder: (context, index) {
-        if (referalCode.isEmpty) {
-          return InvitationCard(
-            amount: x[index]['kamittee_amount'],
-            duration: x[index]['kamittee_duration'],
-            members:
-                '${x[index]['members_total']}/${x[index]['members_needed']}',
-            title: x[index]['kamittee_purpose'],
-            kamitteeDetails: x[index],
-            kamitteeId: '',
-          );
-        } else if (x[index]['referal_code']
-            .toString()
-            .startsWith(referalCode)) {
-          return InvitationCard(
-            amount: x[index]['kamittee_amount'],
-            duration: x[index]['kamittee_duration'],
-            members:
-                '${x[index]['members_total']}/${x[index]['members_needed']}',
-            title: x[index]['kamittee_purpose'],
-            kamitteeDetails: x[index],
-            kamitteeId: '',
-          );
-        } else {
-          return Expanded(
+    yield x.length > 0
+        ? ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: x.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              if (referalCode.isEmpty) {
+                return InvitationCard(
+                  amount: x[index]['kamittee_amount'],
+                  duration: x[index]['kamittee_duration'],
+                  members:
+                      '${x[index]['members_total']}/${x[index]['members_needed']}',
+                  title: x[index]['kamittee_purpose'],
+                  kamitteeDetails: x[index],
+                  kamitteeId: x[index]['id'],
+                );
+              } else if (x[index]['referral_code']
+                  .toString()
+                  .startsWith(referalCode)) {
+                return InvitationCard(
+                  amount: x[index]['kamittee_amount'],
+                  duration: x[index]['kamittee_duration'],
+                  members:
+                      '${x[index]['members_total']}/${x[index]['members_needed']}',
+                  title: x[index]['kamittee_purpose'],
+                  kamitteeDetails: x[index],
+                  kamitteeId: x[index]['id'],
+                );
+              } else {
+                return Container();
+              }
+            },
+          )
+        : Expanded(
             child: Center(
-              child: Text('No Kamittee Found'),
+              child: Text(
+                'No Kamittee Found',
+                style: TextStyle(
+                  color: AppColor.secondary,
+                ),
+              ),
             ),
           );
-        }
-      },
-    );
   }
 
   Stream<Widget> getKamitteeMembers(context, kamitteeId) async* {
