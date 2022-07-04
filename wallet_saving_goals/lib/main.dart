@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         );
       },
-      title: 'Kamitte',
+      title: 'Kamittee',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: "Metropolis",

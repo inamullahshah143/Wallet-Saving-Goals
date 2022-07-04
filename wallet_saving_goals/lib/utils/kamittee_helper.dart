@@ -305,9 +305,6 @@ class KamitteeHelper extends GetxController {
               .get()
               .then(
             (userData) {
-              print(item['kamittee_no'].toString());
-              print(item['member_id'].toString());
-              print(item['status'].toString());
               x.add(
                 Card(
                   child: ListTile(
@@ -335,21 +332,19 @@ class KamitteeHelper extends GetxController {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(userData.data()['email'].toString()),
-                        ButtonBar(
-                          alignment: MainAxisAlignment.start,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            item['member_id'] == user.uid
+                            item['member_id'] != hostId
                                 ? IconButton(
                                     onPressed: () {
                                       ContactHelper().callNumber(
                                           context, userData.data()['phone_no']);
                                     },
-                                    icon: Icon(
-                                      Icons.call,
-                                    ),
+                                    icon: Icon(Icons.call),
                                   )
                                 : SizedBox(),
-                            item['member_id'] == user.uid
+                            item['member_id'] != hostId
                                 ? IconButton(
                                     onPressed: () {
                                       String roomId = ChatHelper().chatRoomId(
@@ -367,17 +362,19 @@ class KamitteeHelper extends GetxController {
                                         ),
                                       );
                                     },
-                                    icon: Icon(
-                                      FontAwesome.chat_empty,
-                                    ),
+                                    icon: Icon(FontAwesome.chat_empty),
                                   )
                                 : SizedBox(),
-                            Text(
-                              item['status'] == '0' ? 'Un-paid' : 'Paid',
-                              style: TextStyle(
-                                color: item['status'] == '0'
-                                    ? AppColor.red
-                                    : Colors.green,
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 15.0),
+                              child: Text(
+                                item['status'] == '0' ? 'Un-paid' : 'Paid',
+                                style: TextStyle(
+                                  color: item['status'] == '0'
+                                      ? AppColor.red
+                                      : Colors.green,
+                                ),
                               ),
                             ),
                           ],
