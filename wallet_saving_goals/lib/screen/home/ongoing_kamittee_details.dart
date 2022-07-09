@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
+import 'package:wallet_saving_goals/utils/stripe_helper.dart';
 
 class OngoingDetails extends StatelessWidget {
   final Map<String, dynamic> kamitteeDetails;
@@ -14,6 +15,7 @@ class OngoingDetails extends StatelessWidget {
     @required this.kamitteeId,
   }) : super(key: key);
 
+  final paymentController = Get.put(PaymentController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -352,7 +354,16 @@ class OngoingDetails extends StatelessWidget {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(15.0),
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            paymentController
+                .makePayment(
+              amount: '100',
+              currency: 'PKR',
+            )
+                .then((value) async {
+              if (value == null) {}
+            });
+          },
           child: Text('Proceed to Pay'),
           style: ButtonStyle(
             backgroundColor:

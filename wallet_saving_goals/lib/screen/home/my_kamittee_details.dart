@@ -388,6 +388,8 @@ class MyKamitteeDetails extends StatelessWidget {
                   ? Container()
                   : snapshot.hasData
                       ? ListTile(
+                          leading: CircleAvatar(
+                              child: Text(snapshot.data['username'][0])),
                           title: Text(snapshot.data['username'].toString()),
                           subtitle: Text(snapshot.data['email'].toString()),
                         )

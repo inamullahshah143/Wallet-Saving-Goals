@@ -237,13 +237,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.0"
-  flutter_hooks:
-    dependency: transitive
-    description:
-      name: flutter_hooks
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.18.3"
   flutter_image_compress:
     dependency: "direct main"
     description:
@@ -258,13 +251,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
-  flutter_onboard:
-    dependency: "direct main"
-    description:
-      name: flutter_onboard
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   flutter_phone_direct_caller:
     dependency: "direct main"
     description:
@@ -279,13 +265,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.6"
-  flutter_riverpod:
-    dependency: transitive
+  flutter_stripe:
+    dependency: "direct main"
     description:
-      name: flutter_riverpod
+      name: flutter_stripe
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.3"
+    version: "2.5.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -316,7 +302,7 @@ packages:
       name: freezed_annotation
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.15.0"
+    version: "2.0.3"
   get:
     dependency: "direct main"
     description:
@@ -359,13 +345,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.10.1"
-  hooks_riverpod:
-    dependency: transitive
-    description:
-      name: hooks_riverpod
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
   http:
     dependency: transitive
     description:
@@ -632,13 +611,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.0"
-  riverpod:
-    dependency: transitive
-    description:
-      name: riverpod
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.3"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -714,13 +686,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.10.0"
-  state_notifier:
-    dependency: transitive
-    description:
-      name: state_notifier
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.7.2+1"
   stream_channel:
     dependency: transitive
     description:
@@ -735,6 +700,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.0"
+  stripe_android:
+    dependency: transitive
+    description:
+      name: stripe_android
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.5.0"
+  stripe_ios:
+    dependency: transitive
+    description:
+      name: stripe_ios
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.5.0"
+  stripe_platform_interface:
+    dependency: transitive
+    description:
+      name: stripe_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.5.0+1"
   term_glyph:
     dependency: transitive
     description:

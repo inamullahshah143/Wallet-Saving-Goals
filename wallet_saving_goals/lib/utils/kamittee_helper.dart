@@ -241,33 +241,10 @@ class KamitteeHelper extends GetxController {
             x.add(
               ListTile(
                 dense: true,
+                leading:
+                    CircleAvatar(child: Text(userData.data()['username'][0])),
                 title: Text(userData.data()['username']),
                 subtitle: Text(userData.data()['email']),
-                trailing: RichText(
-                  text: TextSpan(
-                    children: [
-                      WidgetSpan(
-                        child: IconButton(
-                          onPressed: () {
-                            ContactHelper().callNumber(
-                                context, userData.data()['phone_no']);
-                          },
-                          icon: Icon(
-                            Icons.call,
-                          ),
-                        ),
-                      ),
-                      WidgetSpan(
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            FontAwesome.chat_empty,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ),
             );
           });
