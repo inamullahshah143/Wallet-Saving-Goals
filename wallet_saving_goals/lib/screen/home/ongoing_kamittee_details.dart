@@ -366,70 +366,70 @@ class _OngoingDetailsState extends State<OngoingDetails> {
         padding: const EdgeInsets.all(15.0),
         child: ElevatedButton(
           onPressed: () async {
-            List kamitteeDetails = [];
-            // paymentController
-            //     .makePayment(
-            //   amount:
-            //       '${(double.tryParse(widget.kamitteeDetails['kamittee_amount']) / double.tryParse(widget.kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
-            //   currency: 'PKR',
-            // )
-            //     .then((value) async {
-            //   if (value == true) {
-            //     await FirebaseFirestore.instance
-            //         .collection('transactions')
-            //         .add({
-            //       'user_id': user.uid,
-            //       'kamittee_amount':
-            //           '${(double.tryParse(widget.kamitteeDetails['kamittee_amount']) / double.tryParse(widget.kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
-            //       'kamittee_id': widget.kamitteeId,
-            //       'date': DateTime.now(),
-            //     }).whenComplete(() async {
-            //       await FirebaseFirestore.instance
-            //           .collection('ongoing_kamittees')
-            //           .doc(widget.kamitteeId)
-            //           .get()
-            //           .then((value) async {
-            //         for (var i = 0; i < value.data()['kamittes'].length; i++) {
-            //           if (value.data()['kamittes'][i]['member_id'] ==
-            //               user.uid) {
-            //             await FirebaseFirestore.instance
-            //                 .collection('ongoing_kamittees')
-            //                 .doc(widget.kamitteeId)
-            //                 .update({
-            //               'kamittes.[$i]': {'status': '1'}
-            //             });
-            //           }
-            //         }
-            //       });
-            //     });
-            //   }
-            // });
-            await FirebaseFirestore.instance
-                .collection('ongoing_kamittees')
-                .doc(widget.kamitteeId)
-                .get()
+            paymentController
+                .makePayment(
+              amount:
+                  '${(double.tryParse(widget.kamitteeDetails['kamittee_amount']) / double.tryParse(widget.kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
+              currency: 'PKR',
+            )
                 .then((value) async {
-              for (var i = 0; i < value.data()['kamittes'].length; i++) {
-                if (value.data()['kamittes'][i]['member_id'] == user.uid) {
+              if (value == true) {
+                await FirebaseFirestore.instance
+                    .collection('transactions')
+                    .add({
+                  'user_id': user.uid,
+                  'kamittee_amount':
+                      '${(double.tryParse(widget.kamitteeDetails['kamittee_amount']) / double.tryParse(widget.kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
+                  'kamittee_id': widget.kamitteeId,
+                  'date': DateTime.now(),
+                }).whenComplete(() async {
                   await FirebaseFirestore.instance
                       .collection('ongoing_kamittees')
                       .doc(widget.kamitteeId)
-                      .update(
-                    {
-                      'kamittes': FieldValue.arrayUnion(
-                        [
+                      .get()
+                      .then((value) async {
+                    for (var i = 0; i < value.data()['kamittes'].length; i++) {
+                      if (value.data()['kamittes'][i]['member_id'] ==
+                          user.uid) {
+                        await FirebaseFirestore.instance
+                            .collection('ongoing_kamittees')
+                            .doc(widget.kamitteeId)
+                            .update(
                           {
-                            'status': '1',
-                            'member_id': value.data()['kamittes'][i]
-                                ['member_id'],
-                            'kamittee_no': value.data()['kamittes'][i]
-                                ['kamittee_no']
-                          }
-                        ],
-                      ),
-                    },
-                  );
-                }
+                            'kamittes': FieldValue.arrayRemove(
+                              [
+                                {
+                                  'status': '0',
+                                  'member_id': value.data()['kamittes'][i]
+                                      ['member_id'],
+                                  'kamittee_no': value.data()['kamittes'][i]
+                                      ['kamittee_no']
+                                }
+                              ],
+                            ),
+                          },
+                        ).whenComplete(() async {
+                          await FirebaseFirestore.instance
+                              .collection('ongoing_kamittees')
+                              .doc(widget.kamitteeId)
+                              .update({
+                            'kamittes': FieldValue.arrayUnion(
+                              [
+                                {
+                                  'status': '1',
+                                  'member_id': value.data()['kamittes'][i]
+                                      ['member_id'],
+                                  'kamittee_no': value.data()['kamittes'][i]
+                                      ['kamittee_no']
+                                }
+                              ],
+                            ),
+                          });
+                        });
+                      }
+                    }
+                  });
+                });
               }
             });
           },

@@ -328,7 +328,6 @@ class KamitteeHelper extends GetxController {
                                           .chatRoomId(userData.id, user.uid);
                                       Get.to(
                                         ChatRoom(
-                                          holderId: userData.id,
                                           userMap: userData.data(),
                                           chatRoomId: roomId,
                                           phoneNumber:

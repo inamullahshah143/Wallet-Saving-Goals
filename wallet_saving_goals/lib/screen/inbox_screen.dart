@@ -70,7 +70,6 @@ class InboxScreen extends StatelessWidget {
                   onTap: () {
                     Get.to(
                       ChatRoom(
-                        holderId: item.data()['host_id'],
                         userMap: userData.data(),
                         chatRoomId: item.data()['chat_room_id'],
                         phoneNumber: userData.data()['phone_no'],

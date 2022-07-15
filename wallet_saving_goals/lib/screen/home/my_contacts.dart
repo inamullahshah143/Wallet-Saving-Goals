@@ -124,7 +124,6 @@ class _MyContactsState extends State<MyContacts> {
                                       prefs.getString('Username').toString());
                                   Get.to(
                                     ChatRoom(
-                                      holderId: value.docs.first.id,
                                       userMap: value.docs.first.data(),
                                       chatRoomId: roomId,
                                       phoneNumber: contactList[index]
