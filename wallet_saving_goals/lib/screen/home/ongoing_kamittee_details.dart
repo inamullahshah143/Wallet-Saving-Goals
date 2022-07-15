@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
@@ -5,6 +6,8 @@ import 'package:intl/intl.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
 import 'package:wallet_saving_goals/utils/stripe_helper.dart';
+
+import '../../main.dart';
 
 class OngoingDetails extends StatefulWidget {
   final Map<String, dynamic> kamitteeDetails;
@@ -362,7 +365,8 @@ class _OngoingDetailsState extends State<OngoingDetails> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(15.0),
         child: ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
+            List kamitteeDetails = [];
             // paymentController
             //     .makePayment(
             //   amount:
@@ -400,6 +404,34 @@ class _OngoingDetailsState extends State<OngoingDetails> {
             //     });
             //   }
             // });
+            await FirebaseFirestore.instance
+                .collection('ongoing_kamittees')
+                .doc(widget.kamitteeId)
+                .get()
+                .then((value) async {
+              for (var i = 0; i < value.data()['kamittes'].length; i++) {
+                if (value.data()['kamittes'][i]['member_id'] == user.uid) {
+                  await FirebaseFirestore.instance
+                      .collection('ongoing_kamittees')
+                      .doc(widget.kamitteeId)
+                      .update(
+                    {
+                      'kamittes': FieldValue.arrayUnion(
+                        [
+                          {
+                            'status': '1',
+                            'member_id': value.data()['kamittes'][i]
+                                ['member_id'],
+                            'kamittee_no': value.data()['kamittes'][i]
+                                ['kamittee_no']
+                          }
+                        ],
+                      ),
+                    },
+                  );
+                }
+              }
+            });
           },
           child: Text('Proceed to Pay'),
           style: ButtonStyle(
