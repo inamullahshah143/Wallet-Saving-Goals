@@ -312,7 +312,7 @@ class KamitteeHelper extends GetxController {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            item['member_id'] != hostId
+                            item['member_id'] != user.uid
                                 ? IconButton(
                                     onPressed: () {
                                       ContactHelper().callNumber(
@@ -321,14 +321,11 @@ class KamitteeHelper extends GetxController {
                                     icon: Icon(Icons.call),
                                   )
                                 : SizedBox(),
-                            item['member_id'] != hostId
+                            item['member_id'] != user.uid
                                 ? IconButton(
                                     onPressed: () {
-                                      String roomId = ChatHelper().chatRoomId(
-                                          userData.data()['username'],
-                                          prefs
-                                              .getString('Username')
-                                              .toString());
+                                      String roomId = ChatHelper()
+                                          .chatRoomId(userData.id, user.uid);
                                       Get.to(
                                         ChatRoom(
                                           holderId: userData.id,

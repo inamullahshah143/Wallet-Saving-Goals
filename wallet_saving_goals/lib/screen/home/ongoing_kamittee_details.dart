@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
@@ -6,8 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
 import 'package:wallet_saving_goals/utils/stripe_helper.dart';
-
-import '../../main.dart';
 
 class OngoingDetails extends StatefulWidget {
   final Map<String, dynamic> kamitteeDetails;

@@ -36,12 +36,9 @@ class _ChatRoomState extends State<ChatRoom> {
         .collection('chat_list')
         .doc(widget.holderId)
         .set({
-      'holder_id': widget.holderId,
+      'user_1': widget.holderId,
       'chat_room_id': widget.chatRoomId,
-      'username': prefs.getString('Username'),
-      'email': prefs.getString('Email'),
-      'phone_no': prefs.getString('PhoneNo'),
-      'host_id': user.uid,
+      'user_2': user.uid,
     });
     await FirebaseFirestore.instance
         .collection('chat_room')

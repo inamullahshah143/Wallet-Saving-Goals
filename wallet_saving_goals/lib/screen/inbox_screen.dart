@@ -50,39 +50,51 @@ class InboxScreen extends StatelessWidget {
 
   Stream<Widget> getChat(context) async* {
     List x = <Widget>[];
-    var result = await FirebaseFirestore.instance
+    List users = [];
+    await FirebaseFirestore.instance
         .collection('chat_list')
-        .where('host_id', isEqualTo: user.uid)
-        .get();
-
-    for (var item in result.docs) {
-      x.add(
-        Card(
-          child: ListTile(
-            onTap: () {
-              Get.to(
-                ChatRoom(
-                  holderId: item.data()['holder_id'],
-                  userMap: item.data(),
-                  chatRoomId: item.data()['chat_room_id'],
-                  phoneNumber: item.data()['phone_no'],
+        .get()
+        .then((value) async {
+      for (var item in value.docs) {
+        if (item.data()['chat_room_id'].split(',').contains(user.uid)) {
+          users = item.data()['chat_room_id'].split(',');
+          users.remove(user.uid);
+          await FirebaseFirestore.instance
+              .collection('user')
+              .doc(users.join(',').toString())
+              .get()
+              .then((userData) {
+            x.add(
+              Card(
+                child: ListTile(
+                  onTap: () {
+                    Get.to(
+                      ChatRoom(
+                        holderId: item.data()['host_id'],
+                        userMap: userData.data(),
+                        chatRoomId: item.data()['chat_room_id'],
+                        phoneNumber: userData.data()['phone_no'],
+                      ),
+                    );
+                  },
+                  leading:
+                      CircleAvatar(child: Text(userData.data()['username'][0])),
+                  title: Text(userData.data()['username']),
+                  subtitle: Text(userData.data()['email']),
+                  trailing: IconButton(
+                    icon: Icon(Icons.phone),
+                    onPressed: () async {
+                      ContactHelper()
+                          .callNumber(context, userData.data()['phone_no']);
+                    },
+                  ),
                 ),
-              );
-            },
-            leading: CircleAvatar(
-                        child: Text(item.data()['username'][0])),
-            title: Text(item.data()['username']),
-            subtitle: Text(item.data()['email']),
-            trailing: IconButton(
-              icon: Icon(Icons.phone),
-              onPressed: () async {
-                ContactHelper().callNumber(context, item.data()['phone_no']);
-              },
-            ),
-          ),
-        ),
-      );
-    }
+              ),
+            );
+          });
+        }
+      }
+    });
 
     yield Padding(
       padding: const EdgeInsets.all(15.0),
