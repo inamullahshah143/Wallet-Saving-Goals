@@ -9,8 +9,10 @@ import 'package:wallet_saving_goals/constants/color.dart';
 class PaymentController extends GetxController {
   Map<String, dynamic> paymentIntentData;
 
-  Future makePayment(
-      {@required String amount, @required String currency}) async {
+  Future makePayment({
+    @required String amount,
+    @required String currency,
+  }) async {
     try {
       paymentIntentData = await createPaymentIntent(amount, currency);
       if (paymentIntentData != null) {
@@ -27,10 +29,12 @@ class PaymentController extends GetxController {
         ));
         displayPaymentSheet();
       }
+      return true;
     } catch (e, s) {
       if (kDebugMode) {
         print('exception:$e$s');
       }
+      return false;
     }
   }
 

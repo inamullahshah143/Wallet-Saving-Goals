@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
@@ -6,7 +7,9 @@ import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
 import 'package:wallet_saving_goals/utils/stripe_helper.dart';
 
-class OngoingDetails extends StatelessWidget {
+import '../../main.dart';
+
+class OngoingDetails extends StatefulWidget {
   final Map<String, dynamic> kamitteeDetails;
   final String kamitteeId;
   OngoingDetails({
@@ -15,7 +18,13 @@ class OngoingDetails extends StatelessWidget {
     @required this.kamitteeId,
   }) : super(key: key);
 
+  @override
+  State<OngoingDetails> createState() => _OngoingDetailsState();
+}
+
+class _OngoingDetailsState extends State<OngoingDetails> {
   final paymentController = Get.put(PaymentController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +78,7 @@ class OngoingDetails extends StatelessWidget {
                         color: AppColor.white,
                       ),
                       Text(
-                        '${kamitteeDetails['members_total']}/${kamitteeDetails['members_needed']}',
+                        '${widget.kamitteeDetails['members_total']}/${widget.kamitteeDetails['members_needed']}',
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -104,7 +113,7 @@ class OngoingDetails extends StatelessWidget {
                           NumberFormat.compactCurrency(
                                   symbol: '', decimalDigits: 2)
                               .format(double.tryParse(
-                                  kamitteeDetails['kamittee_amount']))
+                                  widget.kamitteeDetails['kamittee_amount']))
                               .toString(),
                           style: TextStyle(
                             fontSize: 24,
@@ -138,7 +147,7 @@ class OngoingDetails extends StatelessWidget {
                         color: AppColor.white,
                       ),
                       Text(
-                        kamitteeDetails['kamittee_duration'],
+                        widget.kamitteeDetails['kamittee_duration'],
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -190,7 +199,7 @@ class OngoingDetails extends StatelessWidget {
                       ),
                       TextSpan(
                         text:
-                            '${(double.tryParse(kamitteeDetails['kamittee_amount']) / double.tryParse(kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
+                            '${(double.tryParse(widget.kamitteeDetails['kamittee_amount']) / double.tryParse(widget.kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
                       ),
                       TextSpan(
                         text: ' PKR',
@@ -214,8 +223,8 @@ class OngoingDetails extends StatelessWidget {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: DateFormat.yMMMEd().format(
-                            DateTime.parse(kamitteeDetails['starting_date'])),
+                        text: DateFormat.yMMMEd().format(DateTime.parse(
+                            widget.kamitteeDetails['starting_date'])),
                       ),
                     ],
                   ),
@@ -238,11 +247,13 @@ class OngoingDetails extends StatelessWidget {
                       ),
                       TextSpan(
                         text: DateFormat.yMMMEd().format(
-                          DateTime.parse(kamitteeDetails['starting_date']).add(
+                          DateTime.parse(
+                                  widget.kamitteeDetails['starting_date'])
+                              .add(
                             Duration(
                               days: 30 *
                                   int.tryParse(
-                                    kamitteeDetails['kamittee_duration'],
+                                    widget.kamitteeDetails['kamittee_duration'],
                                   ),
                             ),
                           ),
@@ -333,7 +344,7 @@ class OngoingDetails extends StatelessWidget {
           ),
           StreamBuilder(
             stream: KamitteeHelper().getOngoingKamitteeMembers(
-                context, kamitteeId, kamitteeDetails['host_id']),
+                context, widget.kamitteeId, widget.kamitteeDetails['host_id']),
             builder: (context, snapshot) {
               return snapshot.connectionState == ConnectionState.waiting
                   ? Container()
@@ -357,11 +368,40 @@ class OngoingDetails extends StatelessWidget {
           onPressed: () {
             paymentController
                 .makePayment(
-              amount: '100',
+              amount:
+                  '${(double.tryParse(widget.kamitteeDetails['kamittee_amount']) / double.tryParse(widget.kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
               currency: 'PKR',
             )
                 .then((value) async {
-              if (value == null) {}
+              if (value == true) {
+                await FirebaseFirestore.instance
+                    .collection('transactions')
+                    .add({
+                  'user_id': user.uid,
+                  'kamittee_amount':
+                      '${(double.tryParse(widget.kamitteeDetails['kamittee_amount']) / double.tryParse(widget.kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
+                  'kamittee_id': widget.kamitteeId,
+                  'date': DateTime.now(),
+                }).whenComplete(() async {
+                  await FirebaseFirestore.instance
+                      .collection('ongoing_kamittees')
+                      .doc(widget.kamitteeId)
+                      .get()
+                      .then((value) async {
+                    for (var i = 0; i < value.data()['kamittes'].length; i++) {
+                      if (value.data()['kamittes'][i]['member_id'] ==
+                          user.uid) {
+                        await FirebaseFirestore.instance
+                            .collection('ongoing_kamittees')
+                            .doc(widget.kamitteeId)
+                            .update({
+                          'kamittes.$i': [{'status': '1'}]
+                        });
+                      }
+                    }
+                  });
+                });
+              }
             });
           },
           child: Text('Proceed to Pay'),
