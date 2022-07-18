@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:wallet_saving_goals/admin/admin_ongoing_details.dart';
 import 'package:wallet_saving_goals/chat/chat_room.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/main.dart';
@@ -151,6 +152,49 @@ class KamitteeHelper extends GetxController {
               );
             }
           }
+        }
+      },
+    );
+    return x.length > 0
+        ? ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: x.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return x[index];
+            },
+          )
+        : Expanded(
+            child: Center(
+              child: Text('No Kamittee Found'),
+            ),
+          );
+  }
+
+  Future<Widget> getAdminOngoingKamitteeRecords(context) async {
+    List<Widget> x = [];
+    await FirebaseFirestore.instance.collection('ongoing_kamittees').get().then(
+      (value) {
+        for (var item in value.docs) {
+          x.add(
+            KamitteeCard(
+              amount: item.data()['kamittee_amount'],
+              duration: item.data()['kamittee_duration'],
+              members:
+                  '${item.data()['members_total']}/${item.data()['members_needed']}',
+              title: item.data()['kamittee_purpose'],
+              kamitteeDetails: item.data(),
+              kamitteeId: item.id,
+              onPressed: () {
+                Get.to(
+                  AdminOngoingDetails(
+                    kamitteeDetails: item.data(),
+                    kamitteeId: item.id,
+                  ),
+                );
+              },
+            ),
+          );
         }
       },
     );
