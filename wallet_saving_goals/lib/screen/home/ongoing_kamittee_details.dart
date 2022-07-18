@@ -391,6 +391,8 @@ class _OngoingDetailsState extends State<OngoingDetails> {
                     for (var i = 0; i < value.data()['kamittes'].length; i++) {
                       if (value.data()['kamittes'][i]['member_id'] ==
                           user.uid) {
+                        
+
                         await FirebaseFirestore.instance
                             .collection('ongoing_kamittees')
                             .doc(widget.kamitteeId)

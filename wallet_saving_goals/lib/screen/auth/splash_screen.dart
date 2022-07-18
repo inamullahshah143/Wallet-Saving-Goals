@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:wallet_saving_goals/admin/admin_dashboard.dart';
+import 'package:wallet_saving_goals/main.dart';
 import 'package:wallet_saving_goals/screen/drawer_menu.dart';
 
 import 'login_screen.dart';
@@ -27,7 +29,11 @@ class _SplashScreenState extends State<SplashScreen> {
       if (user == null) {
         Get.off(LoginScreen());
       } else {
-        Get.off(MenuDrawer());
+        if (prefs.getString('Username') == 'Admin') {
+          Get.offAll(AdminDashboard());
+        } else {
+          Get.offAll(MenuDrawer());
+        }
       }
     });
     super.initState();
