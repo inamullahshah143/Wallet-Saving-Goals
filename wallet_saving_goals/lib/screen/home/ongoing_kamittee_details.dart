@@ -1,3 +1,5 @@
+// ignore_for_file: missing_return
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
@@ -23,6 +25,19 @@ class OngoingDetails extends StatefulWidget {
 }
 
 class _OngoingDetailsState extends State<OngoingDetails> {
+  bool isKamitteePaid;
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      isPaid().then((value) {
+        setState(() {
+          isKamitteePaid = value;
+        });
+      });
+    });
+    super.initState();
+  }
+
   final paymentController = Get.put(PaymentController());
 
   @override
@@ -349,7 +364,7 @@ class _OngoingDetailsState extends State<OngoingDetails> {
               return snapshot.connectionState == ConnectionState.waiting
                   ? Container()
                   : snapshot.hasData
-                      ? Expanded(child:snapshot.data)
+                      ? Expanded(child: snapshot.data)
                       : Center(
                           child: Text(
                             'No Record Found',
@@ -365,76 +380,78 @@ class _OngoingDetailsState extends State<OngoingDetails> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(15.0),
         child: ElevatedButton(
-          onPressed: () async {
-            paymentController
-                .makePayment(
-              amount:
-                  '${(double.tryParse(widget.kamitteeDetails['kamittee_amount']) / double.tryParse(widget.kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
-              currency: 'PKR',
-            )
-                .then((value) async {
-              if (value == true) {
-                await FirebaseFirestore.instance
-                    .collection('transactions')
-                    .add({
-                  'user_id': user.uid,
-                  'kamittee_amount':
-                      '${(double.tryParse(widget.kamitteeDetails['kamittee_amount']) / double.tryParse(widget.kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
-                  'kamittee_id': widget.kamitteeId,
-                  'date': DateTime.now(),
-                }).whenComplete(() async {
-                  await FirebaseFirestore.instance
-                      .collection('ongoing_kamittees')
-                      .doc(widget.kamitteeId)
-                      .get()
+          onPressed: isKamitteePaid == false
+              ? () async {
+                  paymentController
+                      .makePayment(
+                    amount:
+                        '${(double.tryParse(widget.kamitteeDetails['kamittee_amount']) / double.tryParse(widget.kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
+                    currency: 'PKR',
+                  )
                       .then((value) async {
-                    for (var i = 0; i < value.data()['kamittes'].length; i++) {
-                      if (value.data()['kamittes'][i]['member_id'] ==
-                          user.uid) {
-                        
-
+                    if (value == true) {
+                      await FirebaseFirestore.instance
+                          .collection('transactions')
+                          .add({
+                        'user_id': user.uid,
+                        'kamittee_amount':
+                            '${(double.tryParse(widget.kamitteeDetails['kamittee_amount']) / double.tryParse(widget.kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)}',
+                        'kamittee_id': widget.kamitteeId,
+                        'date': DateTime.now(),
+                      }).whenComplete(() async {
                         await FirebaseFirestore.instance
                             .collection('ongoing_kamittees')
                             .doc(widget.kamitteeId)
-                            .update(
-                          {
-                            'kamittes': FieldValue.arrayRemove(
-                              [
+                            .get()
+                            .then((value) async {
+                          for (var i = 0;
+                              i < value.data()['kamittes'].length;
+                              i++) {
+                            if (value.data()['kamittes'][i]['member_id'] ==
+                                user.uid) {
+                              await FirebaseFirestore.instance
+                                  .collection('ongoing_kamittees')
+                                  .doc(widget.kamitteeId)
+                                  .update(
                                 {
-                                  'status': '0',
-                                  'member_id': value.data()['kamittes'][i]
-                                      ['member_id'],
-                                  'kamittee_no': value.data()['kamittes'][i]
-                                      ['kamittee_no']
-                                }
-                              ],
-                            ),
-                          },
-                        ).whenComplete(() async {
-                          await FirebaseFirestore.instance
-                              .collection('ongoing_kamittees')
-                              .doc(widget.kamitteeId)
-                              .update({
-                            'kamittes': FieldValue.arrayUnion(
-                              [
-                                {
-                                  'status': '1',
-                                  'member_id': value.data()['kamittes'][i]
-                                      ['member_id'],
-                                  'kamittee_no': value.data()['kamittes'][i]
-                                      ['kamittee_no']
-                                }
-                              ],
-                            ),
-                          });
+                                  'kamittes': FieldValue.arrayRemove(
+                                    [
+                                      {
+                                        'status': '0',
+                                        'member_id': value.data()['kamittes'][i]
+                                            ['member_id'],
+                                        'kamittee_no': value.data()['kamittes']
+                                            [i]['kamittee_no']
+                                      }
+                                    ],
+                                  ),
+                                },
+                              ).whenComplete(() async {
+                                await FirebaseFirestore.instance
+                                    .collection('ongoing_kamittees')
+                                    .doc(widget.kamitteeId)
+                                    .update({
+                                  'kamittes': FieldValue.arrayUnion(
+                                    [
+                                      {
+                                        'status': '1',
+                                        'member_id': value.data()['kamittes'][i]
+                                            ['member_id'],
+                                        'kamittee_no': value.data()['kamittes']
+                                            [i]['kamittee_no']
+                                      }
+                                    ],
+                                  ),
+                                });
+                              });
+                            }
+                          }
                         });
-                      }
+                      });
                     }
                   });
-                });
-              }
-            });
-          },
+                }
+              : () {},
           child: Text('Proceed to Pay'),
           style: ButtonStyle(
             backgroundColor:
@@ -455,5 +472,22 @@ class _OngoingDetailsState extends State<OngoingDetails> {
         ),
       ),
     );
+  }
+
+  Future<bool> isPaid() async {
+    await FirebaseFirestore.instance
+        .collection('ongoing_kamittees')
+        .doc(widget.kamitteeId)
+        .get()
+        .then((value) {
+      for (var item in value.data()['kamittes']) {
+        if (item['member_id'] == user.uid) {
+          if (item['status'] == '0')
+            return true;
+          else
+            return false;
+        }
+      }
+    });
   }
 }
