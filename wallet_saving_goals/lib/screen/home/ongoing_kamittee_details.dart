@@ -39,6 +39,17 @@ class _OngoingDetailsState extends State<OngoingDetails> {
   }
 
   final paymentController = Get.put(PaymentController());
+  bool isPaid = true;
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      isKamitteePaid().whenComplete(() {
+        setState(() {});
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -380,7 +391,7 @@ class _OngoingDetailsState extends State<OngoingDetails> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(15.0),
         child: ElevatedButton(
-          onPressed: isKamitteePaid == false
+          onPressed: isPaid == false
               ? () async {
                   paymentController
                       .makePayment(
@@ -454,8 +465,9 @@ class _OngoingDetailsState extends State<OngoingDetails> {
               : () {},
           child: Text('Proceed to Pay'),
           style: ButtonStyle(
-            backgroundColor:
-                MaterialStateProperty.all<Color>(AppColor.appThemeColor),
+            backgroundColor: isPaid == false
+                ? MaterialStateProperty.all<Color>(AppColor.appThemeColor)
+                : MaterialStateProperty.all<Color>(AppColor.secondary),
             foregroundColor: MaterialStateProperty.all<Color>(AppColor.white),
             overlayColor: MaterialStateProperty.all<Color>(
               AppColor.white.withOpacity(0.1),
@@ -474,7 +486,7 @@ class _OngoingDetailsState extends State<OngoingDetails> {
     );
   }
 
-  Future<bool> isPaid() async {
+  Future isKamitteePaid() async {
     await FirebaseFirestore.instance
         .collection('ongoing_kamittees')
         .doc(widget.kamitteeId)
@@ -482,10 +494,13 @@ class _OngoingDetailsState extends State<OngoingDetails> {
         .then((value) {
       for (var item in value.data()['kamittes']) {
         if (item['member_id'] == user.uid) {
-          if (item['status'] == '0')
-            return true;
-          else
-            return false;
+          if (item['status'] == '1') {
+            setState(() {
+              isPaid = true;
+            });
+          } else {
+            isPaid = false;
+          }
         }
       }
     });
