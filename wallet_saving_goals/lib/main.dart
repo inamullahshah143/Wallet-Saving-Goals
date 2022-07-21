@@ -1,3 +1,4 @@
+import 'package:cron/cron.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +12,13 @@ import 'package:wallet_saving_goals/screen/auth/splash_screen.dart';
 SharedPreferences prefs;
 FirebaseAuth _auth;
 get user => _auth.currentUser;
+Cron cron;
 Future<void> main() async {
+  cron = Cron();
   WidgetsFlutterBinding.ensureInitialized();
+  cron.schedule(Schedule(seconds:1), () => {
+    print('hello')
+  });
   Stripe.publishableKey =
       'pk_test_51L2ySrFA9SdVfjX6vdz0gEReE6hOUFP98XLtjPwAwAfKbR9F3241hdNNUrAcXXLNKYWmtD6xQrlIXfb2rsOPCv5u00u784rvKl';
 
