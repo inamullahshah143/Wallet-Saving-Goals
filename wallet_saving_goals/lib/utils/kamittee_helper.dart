@@ -446,6 +446,7 @@ class KamitteeHelper extends GetxController {
       }
 
       kamitteeData = {
+        'current_turn' : '1',
         'host_id': value.data()['host_id'],
         'kamittee_amount': value.data()['kamittee_amount'],
         'kamittee_duration': value.data()['kamittee_duration'],

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cron/cron.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -16,8 +17,56 @@ Cron cron;
 Future<void> main() async {
   cron = Cron();
   WidgetsFlutterBinding.ensureInitialized();
-  cron.schedule(Schedule(seconds:1), () => {
-    print('hello')
+  cron.schedule(Schedule.parse('0 0 1 * *'), () async {
+    await FirebaseFirestore.instance
+        .collection('ongoing_kamittees')
+        .get()
+        .then((value) async {
+      for (var item in value.docs) {
+        int currentTurn = int.tryParse(item['current_turn']);
+        if (currentTurn <= int.tryParse(item['kamittee_duration'])) {
+          for (var i = 0; i < item.data()['kamittes'].length; i++) {
+            await FirebaseFirestore.instance
+                .collection('ongoing_kamittees')
+                .doc(item.id)
+                .update(
+              {
+                'kamittes': FieldValue.arrayRemove(
+                  [
+                    {
+                      'status': '1',
+                      'member_id': item.data()['kamittes'][i]['member_id'],
+                      'kamittee_no': item.data()['kamittes'][i]['kamittee_no']
+                    }
+                  ],
+                ),
+              },
+            ).whenComplete(() async {
+              await FirebaseFirestore.instance
+                  .collection('ongoing_kamittees')
+                  .doc(item.id)
+                  .update({
+                'current_turn': (currentTurn + 1).toString(),
+                'kamittes': FieldValue.arrayUnion(
+                  [
+                    {
+                      'status': '0',
+                      'member_id': item.data()['kamittes'][i]['member_id'],
+                      'kamittee_no': item.data()['kamittes'][i]['kamittee_no']
+                    }
+                  ],
+                ),
+              });
+            });
+          }
+        } else {
+          await FirebaseFirestore.instance
+              .collection('ongoing_kamittees')
+              .doc(item.id)
+              .delete();
+        }
+      }
+    });
   });
   Stripe.publishableKey =
       'pk_test_51L2ySrFA9SdVfjX6vdz0gEReE6hOUFP98XLtjPwAwAfKbR9F3241hdNNUrAcXXLNKYWmtD6xQrlIXfb2rsOPCv5u00u784rvKl';

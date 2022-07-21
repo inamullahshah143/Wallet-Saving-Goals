@@ -26,30 +26,35 @@ class OngoingDetails extends StatefulWidget {
 
 class _OngoingDetailsState extends State<OngoingDetails> {
   bool isKamitteePaid;
+  int myTurn;
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      isPaid().then((value) {
-        setState(() {
-          isKamitteePaid = value;
-        });
-      });
+      getMyTurn();
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      isPaid();
     });
     super.initState();
+  }
+
+  Future getMyTurn() async {
+    await FirebaseFirestore.instance
+        .collection('ongoing_kamittees')
+        .doc(widget.kamitteeId)
+        .get()
+        .then((value) {
+      for (var item in value.data()['kamittes']) {
+        if (item['member_id'] == user.uid) {
+          setState(() {
+            myTurn = item['kamittee_no'];
+          });
+        }
+      }
+    });
   }
 
   final paymentController = Get.put(PaymentController());
-  bool isPaid = true;
-
-  @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      isKamitteePaid().whenComplete(() {
-        setState(() {});
-      });
-    });
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -305,7 +310,7 @@ class _OngoingDetailsState extends State<OngoingDetails> {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: 'N/A',
+                        text: myTurn.toString() ?? 'N/A',
                       ),
                     ],
                   ),
@@ -327,7 +332,7 @@ class _OngoingDetailsState extends State<OngoingDetails> {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: 'N/A',
+                        text: widget.kamitteeDetails['current_turn'],
                       ),
                     ],
                   ),
@@ -349,7 +354,11 @@ class _OngoingDetailsState extends State<OngoingDetails> {
                         text: ' : ',
                       ),
                       TextSpan(
-                        text: 'N/A',
+                        text: (int.tryParse(widget
+                                    .kamitteeDetails['kamittee_duration']) -
+                                int.tryParse(
+                                    widget.kamitteeDetails['current_turn']))
+                            .toString(),
                       ),
                     ],
                   ),
@@ -391,7 +400,7 @@ class _OngoingDetailsState extends State<OngoingDetails> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(15.0),
         child: ElevatedButton(
-          onPressed: isPaid == false
+          onPressed: isKamitteePaid == false
               ? () async {
                   paymentController
                       .makePayment(
@@ -465,7 +474,7 @@ class _OngoingDetailsState extends State<OngoingDetails> {
               : () {},
           child: Text('Proceed to Pay'),
           style: ButtonStyle(
-            backgroundColor: isPaid == false
+            backgroundColor: isKamitteePaid == false
                 ? MaterialStateProperty.all<Color>(AppColor.appThemeColor)
                 : MaterialStateProperty.all<Color>(AppColor.secondary),
             foregroundColor: MaterialStateProperty.all<Color>(AppColor.white),
@@ -486,7 +495,7 @@ class _OngoingDetailsState extends State<OngoingDetails> {
     );
   }
 
-  Future isKamitteePaid() async {
+  Future isPaid() async {
     await FirebaseFirestore.instance
         .collection('ongoing_kamittees')
         .doc(widget.kamitteeId)
@@ -496,10 +505,12 @@ class _OngoingDetailsState extends State<OngoingDetails> {
         if (item['member_id'] == user.uid) {
           if (item['status'] == '1') {
             setState(() {
-              isPaid = true;
+              isKamitteePaid = true;
             });
           } else {
-            isPaid = false;
+            setState(() {
+              isKamitteePaid = false;
+            });
           }
         }
       }
