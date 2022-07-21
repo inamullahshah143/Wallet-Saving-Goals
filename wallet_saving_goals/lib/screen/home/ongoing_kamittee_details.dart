@@ -1,3 +1,5 @@
+// ignore_for_file: missing_return
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
@@ -23,6 +25,19 @@ class OngoingDetails extends StatefulWidget {
 }
 
 class _OngoingDetailsState extends State<OngoingDetails> {
+  bool isKamitteePaid;
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      isPaid().then((value) {
+        setState(() {
+          isKamitteePaid = value;
+        });
+      });
+    });
+    super.initState();
+  }
+
   final paymentController = Get.put(PaymentController());
   bool isPaid = true;
 
