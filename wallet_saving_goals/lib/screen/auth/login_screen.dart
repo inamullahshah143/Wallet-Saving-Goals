@@ -132,8 +132,6 @@ class LoginScreen extends StatelessWidget {
                                   padding: const EdgeInsets.all(15.0),
                                   child: TextFormField(
                                     controller: password,
-                                    validator: (value) =>
-                                        Helper.validatePassword(value),
                                     obscureText: isVisible.value,
                                     autovalidateMode:
                                         AutovalidateMode.onUserInteraction,
@@ -245,25 +243,31 @@ class LoginScreen extends StatelessWidget {
                                         .doc(result.user.uid)
                                         .get()
                                         .then((value) async {
-                                      prefs.setString(
-                                          'Username', value.data()['username']);
-                                      prefs.setString(
-                                          'UserID', result.user.uid);
-                                      prefs.setString(
-                                          'Email', value.data()['email']);
-                                      prefs.setString(
-                                          'PhoneNo', value.data()['phone_no']);
-                                      prefs.setString(
-                                          'ProfilePicture',
-                                          value
-                                              .data()['profile_picture']
-                                              .toString());
-                                      prefs.setString(
-                                          'UserType', accountType.value);
-                                      Navigator.of(context).pop();
-                                      Components.showSnackBar(
-                                          context, 'Wellcome back');
-                                      Get.off(MenuDrawer());
+                                      if (value.data()['username'] != 'Admin') {
+                                        prefs.setString('Username',
+                                            value.data()['username']);
+                                        prefs.setString(
+                                            'UserID', result.user.uid);
+                                        prefs.setString(
+                                            'Email', value.data()['email']);
+                                        prefs.setString('PhoneNo',
+                                            value.data()['phone_no']);
+                                        prefs.setString(
+                                            'ProfilePicture',
+                                            value
+                                                .data()['profile_picture']
+                                                .toString());
+                                        prefs.setString(
+                                            'UserType', accountType.value);
+                                        Navigator.of(context).pop();
+                                        Components.showSnackBar(
+                                            context, 'Wellcome back');
+                                        Get.off(MenuDrawer());
+                                      } else {
+                                        Navigator.of(context).pop();
+                                        Components.showSnackBar(context,
+                                            'You are not allowed to login from this panel');
+                                      }
                                     });
                                   }
                                 }).catchError((e) {
@@ -493,8 +497,6 @@ class LoginScreen extends StatelessWidget {
                                   padding: const EdgeInsets.all(15.0),
                                   child: TextFormField(
                                     controller: password,
-                                    validator: (value) =>
-                                        Helper.validatePassword(value),
                                     obscureText: isVisible.value,
                                     autovalidateMode:
                                         AutovalidateMode.onUserInteraction,

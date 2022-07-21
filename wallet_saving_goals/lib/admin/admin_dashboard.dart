@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';
 import 'package:wallet_saving_goals/admin/ongoing_list.dart';
+import 'package:wallet_saving_goals/admin/withdraw_request.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/main.dart';
 import 'package:wallet_saving_goals/screen/auth/splash_screen.dart';
@@ -80,7 +81,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             : bottomIndex == 1
                 ? AdminHome()
                 : bottomIndex == 2
-                    ? Container()
+                    ? WithdrawRequest()
                     : Container(),
       ),
       bottomNavigationBar: CircleNavBar(

@@ -1,11 +1,14 @@
 // ignore_for_file: missing_return
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/screen/components/components.dart';
 import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
 import 'package:wallet_saving_goals/utils/stripe_helper.dart';
 
@@ -26,6 +29,7 @@ class OngoingDetails extends StatefulWidget {
 
 class _OngoingDetailsState extends State<OngoingDetails> {
   bool isKamitteePaid;
+  bool isReadyToRequest;
   int myTurn;
   @override
   void initState() {
@@ -43,12 +47,32 @@ class _OngoingDetailsState extends State<OngoingDetails> {
         .collection('ongoing_kamittees')
         .doc(widget.kamitteeId)
         .get()
-        .then((value) {
+        .then((value) async {
       for (var item in value.data()['kamittes']) {
         if (item['member_id'] == user.uid) {
           setState(() {
             myTurn = item['kamittee_no'];
           });
+
+          if (myTurn == int.tryParse(widget.kamitteeDetails['current_turn'])) {
+            await FirebaseFirestore.instance
+                .collection('ongoing_kamittees')
+                .doc(widget.kamitteeId)
+                .get()
+                .then((value) {
+              if (value
+                  .data()['kamittes']
+                  .every((kamittee) => kamittee['status'] == "1")) {
+                setState(() {
+                  isReadyToRequest = true;
+                });
+              } else {
+                setState(() {
+                  isReadyToRequest = false;
+                });
+              }
+            });
+          }
         }
       }
     });
@@ -471,10 +495,152 @@ class _OngoingDetailsState extends State<OngoingDetails> {
                     }
                   });
                 }
-              : () {},
-          child: Text('Proceed to Pay'),
+              : isReadyToRequest == true
+                  ? () {
+                      Map<String, dynamic> requestDetails = {
+                        'user_id': user.uid,
+                        'kamittee_id': widget.kamitteeId,
+                        'amount': widget.kamitteeDetails['kamittee_amount'],
+                      };
+
+                      CoolAlert.show(
+                        context: context,
+                        confirmBtnColor: AppColor.appThemeColor,
+                        barrierDismissible: false,
+                        type: CoolAlertType.custom,
+                        text: 'Please add your banking details',
+                        widget: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: TextFormField(
+                                onChanged: (value) {
+                                  requestDetails['bank_title'] = value;
+                                },
+                                decoration: InputDecoration(
+                                  hintText: 'Bank Title',
+                                  isDense: true,
+                                  filled: true,
+                                  fillColor:
+                                      AppColor.secondary.withOpacity(0.25),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  hintStyle: TextStyle(
+                                    color: AppColor.fonts.withOpacity(0.5),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: TextFormField(
+                                onChanged: (value) {
+                                  requestDetails['account_title'] = value;
+                                },
+                                decoration: InputDecoration(
+                                  hintText: 'Account Title',
+                                  isDense: true,
+                                  filled: true,
+                                  fillColor:
+                                      AppColor.secondary.withOpacity(0.25),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  hintStyle: TextStyle(
+                                    color: AppColor.fonts.withOpacity(0.5),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: TextFormField(
+                                onChanged: (value) {
+                                  requestDetails['account_IBAN'] = value;
+                                },
+                                decoration: InputDecoration(
+                                  hintText: 'Account No. or IBAN',
+                                  isDense: true,
+                                  filled: true,
+                                  fillColor:
+                                      AppColor.secondary.withOpacity(0.25),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  hintStyle: TextStyle(
+                                    color: AppColor.fonts.withOpacity(0.5),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: InternationalPhoneNumberInput(
+                                onInputChanged: (PhoneNumber number) {
+                                  requestDetails['phone_no'] =
+                                      number.phoneNumber;
+                                },
+                                selectorConfig: const SelectorConfig(
+                                  selectorType: PhoneInputSelectorType.DIALOG,
+                                ),
+                                ignoreBlank: false,
+                                autoValidateMode: AutovalidateMode.disabled,
+                                selectorTextStyle:
+                                    const TextStyle(color: Colors.black),
+                                initialValue:
+                                    PhoneNumber(isoCode: 'PK', dialCode: '0'),
+                                formatInput: false,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        signed: true, decimal: true),
+                                inputDecoration: InputDecoration(
+                                  isDense: true,
+                                  filled: true,
+                                  fillColor:
+                                      AppColor.secondary.withOpacity(0.25),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: BorderSide.none,
+                                  ),
+                                  hintText: 'Phone Number',
+                                  hintStyle: TextStyle(
+                                    color: AppColor.fonts.withOpacity(0.5),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        onConfirmBtnTap: () async {
+                          Components.showAlertDialog(context);
+                          await FirebaseFirestore.instance
+                              .collection('withdraw_request')
+                              .add(requestDetails)
+                              .whenComplete(() {
+                            Components.showSnackBar(context,
+                                'Your request has been posted successfully!');
+                            Navigator.of(context).pop();
+                            Navigator.of(context).pop();
+                          });
+                        },
+                        confirmBtnText: 'Send',
+                        backgroundColor: AppColor.fonts,
+                        showCancelBtn: false,
+                      );
+                    }
+                  : () {},
+          child: Text(
+              isReadyToRequest == true ? 'Ready To Request' : 'Proceed to Pay'),
           style: ButtonStyle(
-            backgroundColor: isKamitteePaid == false
+            backgroundColor: isKamitteePaid == false || isReadyToRequest == true
                 ? MaterialStateProperty.all<Color>(AppColor.appThemeColor)
                 : MaterialStateProperty.all<Color>(AppColor.secondary),
             foregroundColor: MaterialStateProperty.all<Color>(AppColor.white),
