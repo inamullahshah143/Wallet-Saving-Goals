@@ -90,7 +90,7 @@ class TransactionHelper {
                         Text(
                             'Account No./IBAN: ' + item.data()['account_IBAN']),
                         Text('Phone No: ' + item.data()['phone_no']),
-                        Text('Amount: ' + item.data()['account_IBAN']),
+                        Text('Amount: ' + item.data()['amount']),
                       ],
                     ),
                     backgroundColor: AppColor.fonts,
