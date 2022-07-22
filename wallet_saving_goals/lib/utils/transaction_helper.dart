@@ -60,11 +60,9 @@ class TransactionHelper {
               return x[index];
             },
           )
-        : Expanded(
-            child: Center(
-              child: Text('No Kamittee Found'),
-            ),
-          );
+        : Center(
+          child: Text('No Kamittee Found'),
+        );
   }
 
   Stream<Widget> getWithdrawRequests(context) async* {
@@ -125,10 +123,8 @@ class TransactionHelper {
               return x[index];
             },
           )
-        : Expanded(
-            child: Center(
-              child: Text('No Kamittee Found'),
-            ),
-          );
+        : Center(
+          child: Text('No Kamittee Found'),
+        );
   }
 }

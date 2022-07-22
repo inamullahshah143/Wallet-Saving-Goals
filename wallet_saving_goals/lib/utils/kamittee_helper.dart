@@ -117,11 +117,9 @@ class KamitteeHelper extends GetxController {
               return x[index];
             },
           )
-        : Expanded(
-            child: Center(
-              child: Text('No Kamittee Found'),
-            ),
-          );
+        : Center(
+          child: Text('No Kamittee Found'),
+        );
   }
 
   Future<Widget> getOngoingKamitteeRecords(context) async {
@@ -164,11 +162,9 @@ class KamitteeHelper extends GetxController {
               return x[index];
             },
           )
-        : Expanded(
-            child: Center(
-              child: Text('No Kamittee Found'),
-            ),
-          );
+        : Center(
+          child: Text('No Kamittee Found'),
+        );
   }
 
   Future<Widget> getAdminOngoingKamitteeRecords(context) async {
@@ -207,11 +203,9 @@ class KamitteeHelper extends GetxController {
               return x[index];
             },
           )
-        : Expanded(
-            child: Center(
-              child: Text('No Kamittee Found'),
-            ),
-          );
+        : Center(
+          child: Text('No Kamittee Found'),
+        );
   }
 
   Stream<Widget> getAllKamitteeRecords(context, referalCode) async* {
@@ -256,16 +250,14 @@ class KamitteeHelper extends GetxController {
               }
             },
           )
-        : Expanded(
-            child: Center(
-              child: Text(
-                'No Kamittee Found',
-                style: TextStyle(
-                  color: AppColor.secondary,
-                ),
-              ),
+        : Center(
+          child: Text(
+            'No Kamittee Found',
+            style: TextStyle(
+              color: AppColor.secondary,
             ),
-          );
+          ),
+        );
   }
 
   Stream<Widget> getKamitteeMembers(context, kamitteeId) async* {
@@ -304,11 +296,9 @@ class KamitteeHelper extends GetxController {
               return x[index];
             },
           )
-        : Expanded(
-            child: Center(
-              child: Text('No Kamittee Found'),
-            ),
-          );
+        : Center(
+          child: Text('No Kamittee Found'),
+        );
   }
 
   Stream<Widget> getOngoingKamitteeMembers(context, kamitteeId, hostId) async* {
@@ -415,11 +405,9 @@ class KamitteeHelper extends GetxController {
               return x[index];
             },
           )
-        : Expanded(
-            child: Center(
-              child: Text('No Kamittee Found'),
-            ),
-          );
+        : Center(
+          child: Text('No Kamittee Found'),
+        );
   }
 
   Future initiateKamittee(context, kamitteeId) async {
