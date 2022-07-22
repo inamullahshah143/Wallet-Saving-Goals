@@ -13,7 +13,7 @@ class WithdrawRequest extends StatelessWidget {
         return snapshot.connectionState == ConnectionState.waiting
             ? Container()
             : snapshot.hasData
-                ? Expanded(child: snapshot.data)
+                ? snapshot.data
                 : Center(
                     child: Text(
                       'No Record Found',
