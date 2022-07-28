@@ -31,12 +31,6 @@ class _ChatRoomState extends State<ChatRoom> {
 
   void _handleSendPressed(String message, String type) async {
     await FirebaseFirestore.instance
-        .collection('chat_list')
-        .doc()
-        .set({
-      'chat_room_id': widget.chatRoomId,
-    });
-    await FirebaseFirestore.instance
         .collection('chat_room')
         .doc(widget.chatRoomId)
         .collection('chat')

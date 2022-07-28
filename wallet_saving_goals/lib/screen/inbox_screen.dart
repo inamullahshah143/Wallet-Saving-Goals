@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wallet_saving_goals/chat/chat_room.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
-import 'package:wallet_saving_goals/main.dart';
 import 'package:wallet_saving_goals/utils/contacts_helper.dart';
+
+import '../main.dart';
 
 class InboxScreen extends StatelessWidget {
   @override
@@ -14,7 +15,7 @@ class InboxScreen extends StatelessWidget {
         backgroundColor: AppColor.white,
         centerTitle: true,
         leading: IconButton(
-          onPressed: () {
+          onPressed: () async {
             Get.back();
           },
           icon: Icon(
@@ -40,9 +41,22 @@ class InboxScreen extends StatelessWidget {
       body: SafeArea(
         child: StreamBuilder(
           stream: getChat(context),
-          builder: ((context, snapshot) {
-            return snapshot.data ?? Container();
-          }),
+          builder: (context, snapshot) {
+            return snapshot.connectionState == ConnectionState.waiting
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : snapshot.hasData
+                    ? snapshot.data
+                    : Center(
+                        child: Text(
+                          'No Kamittee Found',
+                          style: TextStyle(
+                            color: AppColor.secondary,
+                          ),
+                        ),
+                      );
+          },
         ),
       ),
     );
@@ -52,12 +66,13 @@ class InboxScreen extends StatelessWidget {
     List x = <Widget>[];
     List users = [];
     await FirebaseFirestore.instance
-        .collection('chat_list')
+        .collectionGroup('chat_room')
         .get()
         .then((value) async {
       for (var item in value.docs) {
-        if (item.data()['chat_room_id'].split(',').contains(user.uid)) {
-          users = item.data()['chat_room_id'].split(',');
+        print(item.id);
+        if (item.id.split(',').contains(user.uid)) {
+          users = item.id.split(',');
           users.remove(user.uid);
           await FirebaseFirestore.instance
               .collection('user')
@@ -71,7 +86,7 @@ class InboxScreen extends StatelessWidget {
                     Get.to(
                       ChatRoom(
                         userMap: userData.data(),
-                        chatRoomId: item.data()['chat_room_id'],
+                        chatRoomId: item.id,
                         phoneNumber: userData.data()['phone_no'],
                       ),
                     );
@@ -95,15 +110,17 @@ class InboxScreen extends StatelessWidget {
       }
     });
 
-    yield Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: x.length,
-        itemBuilder: (context, index) {
-          return x[index];
-        },
-      ),
-    );
+    yield x.length > 0
+        ? ListView.builder(
+            physics: BouncingScrollPhysics(),
+            itemCount: x.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return x[index];
+            },
+          )
+        : Center(
+            child: Text('No Kamittee Found'),
+          );
   }
 }

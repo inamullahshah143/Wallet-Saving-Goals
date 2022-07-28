@@ -16,7 +16,7 @@ import 'package:wallet_saving_goals/utils/helper.dart';
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key key}) : super(key: key);
   final isVisible = true.obs;
-  final accountType = ''.obs;
+  final accountType = 'holder'.obs;
   final formKey = GlobalKey<FormState>();
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
@@ -132,9 +132,14 @@ class LoginScreen extends StatelessWidget {
                                   padding: const EdgeInsets.all(15.0),
                                   child: TextFormField(
                                     controller: password,
+                                    validator: (value) {
+                                      if (value.isEmpty) {
+                                        return 'please enter your password';
+                                      } else {
+                                        return null;
+                                      }
+                                    },
                                     obscureText: isVisible.value,
-                                    autovalidateMode:
-                                        AutovalidateMode.onUserInteraction,
                                     decoration: InputDecoration(
                                       isDense: true,
                                       filled: true,
@@ -228,7 +233,11 @@ class LoginScreen extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             if (formKey.currentState.validate()) {
-                              if (accountType.value != '') {
+                              if (accountType.value.isEmpty) {
+                                Navigator.of(context).pop();
+                                Components.showSnackBar(
+                                    context, 'please select user type');
+                              } else {
                                 Components.showAlertDialog(context);
                                 AuthenticationHelper()
                                     .signIn(
@@ -274,10 +283,6 @@ class LoginScreen extends StatelessWidget {
                                   Components.showSnackBar(context, e);
                                   Navigator.of(context).pop();
                                 });
-                              } else {
-                                Navigator.of(context).pop();
-                                Components.showSnackBar(
-                                    context, 'please select user type');
                               }
                             }
                           },
