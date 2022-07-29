@@ -11,6 +11,7 @@ import 'package:wallet_saving_goals/screen/auth/splash_screen.dart';
 import 'package:wallet_saving_goals/screen/components/components.dart';
 import 'package:wallet_saving_goals/screen/inbox_screen.dart';
 import 'package:wallet_saving_goals/screen/profile.dart';
+import 'package:wallet_saving_goals/screen/transaction_history.dart';
 import 'package:wallet_saving_goals/utils/auth_helper.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -157,6 +158,17 @@ class MenuScreen extends StatelessWidget {
                   size: 20,
                 ),
                 title: Text('Privacy Policy'),
+              ),
+              ListTile(
+                onTap: () {
+                  Get.to(TransactionHistory());
+                },
+                leading: Icon(
+                  Icons.money_rounded,
+                  color: AppColor.fonts,
+                  size: 20,
+                ),
+                title: Text('Transaction History'),
               ),
               ListTile(
                 onTap: () {
