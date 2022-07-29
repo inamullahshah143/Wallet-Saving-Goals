@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/utils/transaction_helper.dart';
 
 class TransactionHistory extends StatelessWidget {
   const TransactionHistory({Key key}) : super(key: key);
@@ -36,7 +37,23 @@ class TransactionHistory extends StatelessWidget {
           ),
         ),
       ),
-      body: Container(),
+      body: StreamBuilder(
+            stream: TransactionHelper().getMyTransaction(),
+            builder: (context, snapshot) {
+              return snapshot.connectionState == ConnectionState.waiting
+                  ? Container()
+                  : snapshot.hasData
+                      ? Expanded(child: snapshot.data)
+                      : Center(
+                          child: Text(
+                            'No Record Found',
+                            style: TextStyle(
+                              color: AppColor.secondary,
+                            ),
+                          ),
+                        );
+            },
+          ),
     );
   }
 }
