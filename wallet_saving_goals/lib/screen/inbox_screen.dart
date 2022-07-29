@@ -50,7 +50,7 @@ class InboxScreen extends StatelessWidget {
                     ? snapshot.data
                     : Center(
                         child: Text(
-                          'No Kamittee Found',
+                          'No Chat Found',
                           style: TextStyle(
                             color: AppColor.secondary,
                           ),
@@ -120,7 +120,7 @@ class InboxScreen extends StatelessWidget {
             },
           )
         : Center(
-            child: Text('No Kamittee Found'),
+            child: Text('No Chat Found'),
           );
   }
 }
