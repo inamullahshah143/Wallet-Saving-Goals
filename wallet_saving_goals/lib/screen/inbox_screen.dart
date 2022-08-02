@@ -16,7 +16,13 @@ class InboxScreen extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           onPressed: () async {
-            Get.back();
+            await FirebaseFirestore.instance
+                .collectionGroup('chat_room')
+                .get()
+                .then((value) async {
+                print(value.docs);
+              
+            });
           },
           icon: Icon(
             Icons.arrow_back_ios,
