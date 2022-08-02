@@ -66,7 +66,7 @@ class InboxScreen extends StatelessWidget {
     List x = <Widget>[];
     List users = [];
     await FirebaseFirestore.instance
-        .collection('chat_room').doc('oJRI03sAC1OBLwUQWrQsm4T8x2F2,8SXLROKlKQaWc0phEJSWuqUa2gq2').collection('chat')
+        .collection('chat_room')
         .get()
         .then((value) async {
       for (var item in value.docs) {
