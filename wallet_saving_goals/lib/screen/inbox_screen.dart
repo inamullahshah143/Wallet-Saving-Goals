@@ -1,6 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/main.dart';
+import 'package:wallet_saving_goals/utils/contacts_helper.dart';
+
+import '../chat/chat_room.dart';
 
 class InboxScreen extends StatelessWidget {
   @override
@@ -11,16 +16,7 @@ class InboxScreen extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           onPressed: () async {
-            // Get.back();
-            FirebaseFirestore.instance
-                .collectionGroup('chat_room')
-                .where('type', isEqualTo: 'text')
-                .get()
-                .then((value) {
-              for (var item in value.docs) {
-                print(item.id);
-              }
-            });
+            Get.back();
           },
           icon: Icon(
             Icons.arrow_back_ios,
@@ -70,47 +66,47 @@ class InboxScreen extends StatelessWidget {
     List x = <Widget>[];
     List users = [];
     await FirebaseFirestore.instance
-        .collectionGroup('chat_room')
+        .collection('chat_room').doc('oJRI03sAC1OBLwUQWrQsm4T8x2F2,8SXLROKlKQaWc0phEJSWuqUa2gq2').collection('chat')
         .get()
         .then((value) async {
       for (var item in value.docs) {
-        print(item.id);
-        // if (item.id.split(',').contains(user.uid)) {
-        //   users = item.id.split(',');
-        //   users.remove(user.uid);
-        //   await FirebaseFirestore.instance
-        //       .collection('user')
-        //       .doc(users.join(',').toString())
-        //       .get()
-        //       .then((userData) {
-        //     x.add(
-        //       Card(
-        //         child: ListTile(
-        //           onTap: () {
-        //             Get.to(
-        //               ChatRoom(
-        //                 userMap: userData.data(),
-        //                 chatRoomId: item.id,
-        //                 phoneNumber: userData.data()['phone_no'],
-        //               ),
-        //             );
-        //           },
-        //           leading:
-        //               CircleAvatar(child: Text(userData.data()['username'][0])),
-        //           title: Text(userData.data()['username']),
-        //           subtitle: Text(userData.data()['email']),
-        //           trailing: IconButton(
-        //             icon: Icon(Icons.phone),
-        //             onPressed: () async {
-        //               ContactHelper()
-        //                   .callNumber(context, userData.data()['phone_no']);
-        //             },
-        //           ),
-        //         ),
-        //       ),
-        //     );
-        //   });
-        // }
+      
+        if (item.id.split(',').contains(user.uid)) {
+          users = item.id.split(',');
+          users.remove(user.uid);
+          await FirebaseFirestore.instance
+              .collection('user')
+              .doc(users.join(',').toString())
+              .get()
+              .then((userData) {
+            x.add(
+              Card(
+                child: ListTile(
+                  onTap: () {
+                    Get.to(
+                      ChatRoom(
+                        userMap: userData.data(),
+                        chatRoomId: item.id,
+                        phoneNumber: userData.data()['phone_no'],
+                      ),
+                    );
+                  },
+                  leading:
+                      CircleAvatar(child: Text(userData.data()['username'][0])),
+                  title: Text(userData.data()['username']),
+                  subtitle: Text(userData.data()['email']),
+                  trailing: IconButton(
+                    icon: Icon(Icons.phone),
+                    onPressed: () async {
+                      ContactHelper()
+                          .callNumber(context, userData.data()['phone_no']);
+                    },
+                  ),
+                ),
+              ),
+            );
+          });
+        }
       }
     });
 
