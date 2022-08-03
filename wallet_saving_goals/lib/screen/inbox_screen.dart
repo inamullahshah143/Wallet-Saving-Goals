@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wallet_saving_goals/chat/chat_room.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
+import 'package:wallet_saving_goals/main.dart';
 import 'package:wallet_saving_goals/utils/contacts_helper.dart';
 
-import '../main.dart';
+import '../chat/chat_room.dart';
 
 class InboxScreen extends StatelessWidget {
   @override
