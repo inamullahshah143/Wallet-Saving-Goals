@@ -63,8 +63,8 @@ class TransactionHelper {
             },
           )
         : Center(
-          child: Text('No Kamittee Found'),
-        );
+            child: Text('No Kamittee Found'),
+          );
   }
 
   Stream<Widget> getWithdrawRequests(context) async* {
@@ -126,23 +126,23 @@ class TransactionHelper {
             },
           )
         : Center(
-          child: Text('No Transaction Found'),
-        );
+            child: Text('No Transaction Found'),
+          );
   }
 
-  Stream<Widget> getMyTransaction() async* {
+  Future<Widget> getMyTransaction() async {
     List<Widget> x = [];
-    await FirebaseFirestore.instance.collection('transactions').where('user_id',isEqualTo: user.uid).get().then(
+    await FirebaseFirestore.instance
+        .collection('transactions')
+        .where('user_id', isEqualTo: user.uid)
+        .get()
+        .then(
       (value) async {
         for (var item in value.docs) {
-          await FirebaseFirestore.instance
-              .collection('user')
-              .doc(item.data()['user_id'])
-              .get()
-              .then((user) {
-            x.add(
-              ListTile(
-                title: Text(user.data()['username'].toUpperCase()),
+          x.add(
+            Card(
+              child: ListTile(
+                title: Text(prefs.getString('Username').toUpperCase()),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -158,22 +158,25 @@ class TransactionHelper {
                   textAlign: TextAlign.right,
                 ),
               ),
-            );
-          });
+            ),
+          );
         }
       },
     );
-    yield x.length > 0
-        ? ListView.builder(
-            physics: BouncingScrollPhysics(),
-            itemCount: x.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return x[index];
-            },
+    return x.length > 0
+        ? Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView.builder(
+              physics: BouncingScrollPhysics(),
+              itemCount: x.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                return x[index];
+              },
+            ),
           )
         : Center(
-          child: Text('No Transaction Found'),
-        );
+            child: Text('No Transaction Found'),
+          );
   }
 }

@@ -9,7 +9,6 @@ class TransactionHistory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: AppColor.white,
         centerTitle: true,
@@ -37,23 +36,23 @@ class TransactionHistory extends StatelessWidget {
           ),
         ),
       ),
-      body: StreamBuilder(
-            stream: TransactionHelper().getMyTransaction(),
-            builder: (context, snapshot) {
-              return snapshot.connectionState == ConnectionState.waiting
-                  ? Container()
-                  : snapshot.hasData
-                      ? Expanded(child: snapshot.data)
-                      : Center(
-                          child: Text(
-                            'No Record Found',
-                            style: TextStyle(
-                              color: AppColor.secondary,
-                            ),
-                          ),
-                        );
-            },
-          ),
+      body: FutureBuilder(
+        future: TransactionHelper().getMyTransaction(),
+        builder: (context, snapshot) {
+          return snapshot.connectionState == ConnectionState.waiting
+              ? Container()
+              : snapshot.hasData
+                  ? snapshot.data
+                  : Center(
+                      child: Text(
+                        'No Record Found',
+                        style: TextStyle(
+                          color: AppColor.secondary,
+                        ),
+                      ),
+                    );
+        },
+      ),
     );
   }
 }
