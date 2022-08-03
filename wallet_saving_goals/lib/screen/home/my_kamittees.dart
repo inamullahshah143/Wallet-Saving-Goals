@@ -80,7 +80,8 @@ class _MyKamitteesState extends State<MyKamittees> {
                           },
                         ),
                         FutureBuilder(
-                          future: KamitteeHelper().getOngoingKamitteeRecords(context),
+                          future: KamitteeHelper()
+                              .getOngoingKamitteeRecords(context),
                           builder: (context, snapshot) {
                             return snapshot.connectionState ==
                                     ConnectionState.waiting

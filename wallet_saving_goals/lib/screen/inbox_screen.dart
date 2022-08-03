@@ -16,13 +16,7 @@ class InboxScreen extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           onPressed: () async {
-            await FirebaseFirestore.instance
-                .collectionGroup('chat_room')
-                .get()
-                .then((value) async {
-                print(value.docs);
-              
-            });
+            Get.back();
           },
           icon: Icon(
             Icons.arrow_back_ios,
@@ -72,11 +66,10 @@ class InboxScreen extends StatelessWidget {
     List x = <Widget>[];
     List users = [];
     await FirebaseFirestore.instance
-        .collectionGroup('chat_room')
+        .collection('chat_room')
         .get()
         .then((value) async {
       for (var item in value.docs) {
-        print(item.id);
         if (item.id.split(',').contains(user.uid)) {
           users = item.id.split(',');
           users.remove(user.uid);
