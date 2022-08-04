@@ -70,6 +70,7 @@ class InboxScreen extends StatelessWidget {
         .get()
         .then((value) async {
       for (var item in value.docs) {
+        print(item.id);
         if (item.id.split(',').contains(user.uid)) {
           users = item.id.split(',');
           users.remove(user.uid);

@@ -10,6 +10,7 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/screen/components/components.dart';
 import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
+import 'package:wallet_saving_goals/utils/push_notification.dart';
 import 'package:wallet_saving_goals/utils/stripe_helper.dart';
 
 import '../../main.dart';
@@ -486,6 +487,17 @@ class _OngoingDetailsState extends State<OngoingDetails> {
                                       }
                                     ],
                                   ),
+                                });
+                              }).whenComplete(() async {
+                                await FirebaseFirestore.instance
+                                    .collection('user')
+                                    .doc('cZGCfAP1wNg5QiaIk4yWarP46rp2')
+                                    .get()
+                                    .then((admin) {
+                                  PushNotification().sendPushMessage(
+                                      admin.data()['fcm_token'],
+                                      '${prefs.getString('Username')} send ${(double.tryParse(widget.kamitteeDetails['kamittee_amount']) / double.tryParse(widget.kamitteeDetails['kamittee_duration'])).toStringAsFixed(0)} to your respective stripe account successfully',
+                                      'Please have a look');
                                 });
                               });
                             }

@@ -33,6 +33,10 @@ class _ChatRoomState extends State<ChatRoom> {
     await FirebaseFirestore.instance
         .collection('chat_room')
         .doc(widget.chatRoomId)
+        .set({'room_id': widget.chatRoomId});
+    await FirebaseFirestore.instance
+        .collection('chat_room')
+        .doc(widget.chatRoomId)
         .collection('chat')
         .add({
       "author": {

@@ -8,6 +8,7 @@ import 'package:wallet_saving_goals/constants/color.dart';
 import 'package:wallet_saving_goals/main.dart';
 import 'package:wallet_saving_goals/screen/components/components.dart';
 import 'package:wallet_saving_goals/utils/kamittee_helper.dart';
+import 'package:wallet_saving_goals/utils/push_notification.dart';
 
 class ViewKamitteeDetails extends StatelessWidget {
   final Map<String, dynamic> kamitteeDetails;
@@ -366,10 +367,23 @@ class ViewKamitteeDetails extends StatelessWidget {
                                       .update({
                                     'members_list': memberList,
                                     'members_total': memberCount.value
-                                  }).whenComplete(() {
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context).pop();
+                                  }).whenComplete(() async {
+                                    await FirebaseFirestore.instance
+                                        .collection('user')
+                                        .doc(value.data()['host_id'])
+                                        .get()
+                                        .then((host) {
+                                          print(host.data()['fcm_token']);
+                                      PushNotification().sendPushMessage(
+                                          host.data()['fcm_token'],
+                                          '${prefs.getString('Username')} join your kamittee successfully',
+                                          'Success!');
+                                    }).whenComplete(() {
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                      Navigator.of(context).pop();
+                                    });
+
                                     Components.showSnackBar(context,
                                         'Joined Kamittee Successfully');
                                   });

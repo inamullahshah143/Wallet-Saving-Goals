@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cron/cron.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -13,10 +15,19 @@ import 'package:wallet_saving_goals/screen/auth/splash_screen.dart';
 SharedPreferences prefs;
 FirebaseAuth _auth;
 get user => _auth.currentUser;
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  if (kDebugMode) {
+    print('Handling a background message ${message.messageId}');
+  }
+}
+
 Cron cron;
 Future<void> main() async {
   cron = Cron();
   WidgetsFlutterBinding.ensureInitialized();
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+
   cron.schedule(Schedule.parse('0 0 1 * *'), () async {
     await FirebaseFirestore.instance
         .collection('ongoing_kamittees')
@@ -77,6 +88,15 @@ Future<void> main() async {
     _auth = FirebaseAuth.instance;
   });
   prefs = await SharedPreferences.getInstance();
+  if (user != null)
+    FirebaseMessaging.instance.getToken().then((value) async {
+      await FirebaseFirestore.instance
+          .collection('user')
+          .doc(user.uid)
+          .update({'fcm_token': value}).whenComplete(() {
+        prefs.setString('fcm_token', value);
+      });
+    });
   runApp(const MyApp());
 }
 

@@ -120,8 +120,8 @@ class _MyContactsState extends State<MyContacts> {
                                     .get()
                                     .then((value) {
                                   String roomId = ChatHelper().chatRoomId(
-                                      value.docs.first.data()['username'],
-                                      prefs.getString('Username').toString());
+                                      value.docs.first.id,
+                                      user.uid);
                                   Get.to(
                                     ChatRoom(
                                       userMap: value.docs.first.data(),

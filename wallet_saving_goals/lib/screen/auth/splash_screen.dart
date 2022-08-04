@@ -7,6 +7,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:wallet_saving_goals/admin/admin_dashboard.dart';
 import 'package:wallet_saving_goals/main.dart';
 import 'package:wallet_saving_goals/screen/drawer_menu.dart';
+import 'package:wallet_saving_goals/utils/push_notification.dart';
 
 import 'login_screen.dart';
 
@@ -21,6 +22,9 @@ class _SplashScreenState extends State<SplashScreen> {
   User user;
   @override
   void initState() {
+    PushNotification().requestPermission();
+    PushNotification().loadFCM();
+    PushNotification().listenFCM();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       requestStoragePermission();
     });
